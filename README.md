@@ -1,1 +1,3 @@
 # Flat-finder
+
+merge
