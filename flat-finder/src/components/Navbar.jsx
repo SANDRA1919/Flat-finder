@@ -9,8 +9,14 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+
+    
+    const isConfirmed = window.confirm('Are you sure you want to logout?');
+
+    if(isConfirmed) {
     await logout();
     navigate('/login');
+    }else{}
   };
 
   return (

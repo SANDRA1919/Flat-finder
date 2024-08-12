@@ -11,11 +11,17 @@ const FlatCard = ({ flat, onDelete, onToggleFavorite }) => {
   const { user } = useAuth();
 
   const handleDelete = async () => {
-    try {
-      await deleteDoc(doc(db, 'flats', flat.id));
-      onDelete(flat.id);
-    } catch (error) {
-      console.error('Error deleting flat:', error);
+
+    const isConfirmed = window.confirm('Are you sure you want to delete this flat?');
+    
+    if(isConfirmed) {
+      try {
+        await deleteDoc(doc(db, 'flats', flat.id));
+        onDelete(flat.id);
+  
+      } catch (error) {
+        console.error('Error deleting flat:', error);
+      }
     }
   };
 
