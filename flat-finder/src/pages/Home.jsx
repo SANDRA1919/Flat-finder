@@ -38,12 +38,17 @@ const Home = () => {
   }, []);
 
   const handleDelete = async (flatId) => {
-    try {
-      await deleteDoc(doc(db, 'flats', flatId));
-      setFlats(flats.filter(flat => flat.id !== flatId));
-      toast.success('Flat deleted successfully');
-    } catch (error) {
-      toast.error('Error deleting flat');
+
+    const isConfirmed = window.confirm('Are you sure you want to delete this flat?');
+
+    if(isConfirmed){
+      try {
+        await deleteDoc(doc(db, 'flats', flatId));
+        setFlats(flats.filter(flat => flat.id !== flatId));
+        toast.success('Flat deleted successfully');
+      } catch (error) {
+        toast.error('Error deleting flat');
+      }
     }
   };
 
@@ -145,9 +150,11 @@ const Home = () => {
                     </IconButton>
                   </TableCell>
                   <TableCell>
-                    <Button onClick={() => handleSendMessage(flat.id)} startIcon={<SendIcon />} variant="contained" color="primary">
-                      Send Message
-                    </Button>
+                  {flat.ownerId !== user.uid && (
+                      <Button onClick={() => handleSendMessage(flat.id)} startIcon={<SendIcon />} variant="contained" color="primary">
+                        Send Message
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
