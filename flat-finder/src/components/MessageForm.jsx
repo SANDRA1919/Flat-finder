@@ -1,53 +1,47 @@
 // src/components/MessageForm.jsx
 import React, { useState } from 'react';
-import { TextField, Button } from '@mui/material';
+import { Button, TextField, Stack } from '@mui/material';
 import { db } from '../firebase';
-import { addDoc, collection } from 'firebase/firestore';
-import { toast } from 'react-toastify';
+import { collection, addDoc } from 'firebase/firestore';
 
 const MessageForm = ({ flatId, recipientId, senderId, senderEmail }) => {
-  const [content, setContent] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleChange = (e) => {
-    setContent(e.target.value);
-  };
+  const handleSend = async () => {
+    if (message.trim() === '') return;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!content) {
-      toast.error('Message content cannot be empty');
-      return;
-    }
+    const timestamp = new Date(); // Current date and time
+
     try {
       await addDoc(collection(db, 'messages'), {
         flatId,
+        recipientId,
         senderId,
         senderEmail,
-        recipientId,
-        content,
-        creationTime: new Date()
+        message,
+        timestamp: timestamp.toISOString(), // Save timestamp as ISO string
       });
-      toast.success('Message sent successfully');
-      setContent('');
+      setMessage(''); // Clear message input after sending
     } catch (error) {
-      toast.error('Error sending message');
-      console.error('Error sending message:', error);
+      console.error('Error sending message: ', error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Stack spacing={2}>
       <TextField
         label="Message"
-        value={content}
-        onChange={handleChange}
-        required
+        variant="outlined"
         fullWidth
         multiline
         rows={4}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
       />
-      <Button type="submit" variant="contained" color="primary">Send</Button>
-    </form>
+      <Button variant="contained" color="primary" onClick={handleSend}>
+        Send
+      </Button>
+    </Stack>
   );
 };
 
