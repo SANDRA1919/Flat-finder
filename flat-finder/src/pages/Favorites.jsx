@@ -36,6 +36,10 @@ const Favorites = () => {
   }, [user]);
 
   const handleRemoveFavorite = async (flatId) => {
+
+    const isConfirmed = window.confirm('Are you sure you want to delete from favorites?');
+
+    if(isConfirmed) {
     try {
       const flatRef = doc(db, 'flats', flatId);
       await updateDoc(flatRef, {
@@ -45,7 +49,8 @@ const Favorites = () => {
     } catch (error) {
       console.error('Error removing favorite:', error);
     }
-  };
+  }
+}
 
   const handleSort = (key) => {
     let direction = 'asc';
