@@ -37,6 +37,10 @@ const NewFlat = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const isConfirmed = window.confirm('Are you sure you want to save the flat?');
+
+    if(isConfirmed) {
     try {
       await addDoc(collection(db, 'flats'), {
         ...form,
@@ -54,7 +58,8 @@ const NewFlat = () => {
       toast.error('Error adding flat');
       console.error('Error adding flat:', error);
     }
-  };
+  }
+}
 
   return (
     <Container maxWidth="md">

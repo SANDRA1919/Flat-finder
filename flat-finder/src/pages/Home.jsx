@@ -145,9 +145,11 @@ const Home = () => {
                     </IconButton>
                   </TableCell>
                   <TableCell>
-                    <IconButton onClick={() => handleDelete(flat.id)}>
-                      <DeleteIcon />
-                    </IconButton>
+                  {flat.ownerId === user.uid && (
+                      <IconButton onClick={() => handleDelete(flat.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
                   </TableCell>
                   <TableCell>
                   {flat.ownerId !== user.uid && (

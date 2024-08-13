@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "toastr": "^2.1.4"
+    "react-toastify": "^10.0.5",
+    "toastr": "^2.1.4",
+    "validator": "^13.12.0"
   }
 }
