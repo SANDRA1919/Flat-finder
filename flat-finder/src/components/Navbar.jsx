@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -13,23 +12,36 @@ import {
   ListItem,
   ListItemText,
   Divider,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';  // Assuming you have this hook for authentication
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PersonIcon from '@mui/icons-material/Person';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth();  // Using the actual authentication hook
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);  // State for managing the dialog
 
-  const handleLogout = async () => {
-    const isConfirmed = window.confirm('Are you sure you want to logout?');
-    if (isConfirmed) {
-      await logout();
-      navigate('/login');
-    }
+  // Handlers for dialog open/close and logout confirmation
+  const handleDialogOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
+  const handleLogoutConfirm = async () => {
+    await logout();
+    navigate('/login');
+    setOpenDialog(false);
   };
 
   const toggleDrawer = (open) => () => {
@@ -60,7 +72,7 @@ const Navbar = () => {
               <ListItemText primary="All users" />
             </ListItem>
           )}
-          <ListItem button onClick={handleLogout}>
+          <ListItem button onClick={handleDialogOpen}>
             <ListItemText primary="Logout" />
           </ListItem>
         </>
@@ -82,7 +94,9 @@ const Navbar = () => {
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>FlatFinder</Link>
+            <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              FlatFinder
+            </Link>
           </Typography>
           {user && (
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 2 }}>
@@ -98,7 +112,6 @@ const Navbar = () => {
           )}
         </Box>
 
-        {/* Hamburger Icon */}
         <Box sx={{ display: { xs: 'block', md: 'none' } }}>
           <IconButton
             edge="start"
@@ -110,7 +123,6 @@ const Navbar = () => {
           </IconButton>
         </Box>
 
-        {/* Full Menu (Desktop) */}
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
           <Button color="inherit" component={Link} to="/">
             Home
@@ -134,7 +146,7 @@ const Navbar = () => {
                   All users
                 </Button>
               )}
-              <Button color="inherit" onClick={handleLogout}>
+              <Button color="inherit" onClick={handleDialogOpen}>
                 Logout
               </Button>
             </>
@@ -151,7 +163,6 @@ const Navbar = () => {
         </Box>
       </Toolbar>
 
-      {/* Drawer Menu (Mobile) */}
       <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
         <Box
           sx={{ width: 250 }}
@@ -159,12 +170,33 @@ const Navbar = () => {
           onClick={toggleDrawer(false)}
           onKeyDown={toggleDrawer(false)}
         >
-          <List>
-            {menuItems}
-          </List>
+          <List>{menuItems}</List>
           <Divider />
         </Box>
       </Drawer>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        aria-labelledby="logout-dialog-title"
+        aria-describedby="logout-dialog-description"
+      >
+        <DialogTitle id="logout-dialog-title">Confirm Logout</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="logout-dialog-description">
+            Are you sure you want to logout?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            No
+          </Button>
+          <Button onClick={handleLogoutConfirm} color="primary" autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AppBar>
   );
 };

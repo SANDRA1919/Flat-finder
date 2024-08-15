@@ -103,7 +103,7 @@ const Favorites = () => {
             </FormControl>
             <Grid container spacing={2}>
               {sortedFavorites.map((flat) => (
-                <Grid item xs={12} sm={6} key={flat.id}>
+                <Grid item xs={12} key={flat.id}>
                   <Card>
                     <CardContent>
                       <Typography variant="h6"><strong>City:</strong> {flat.city}</Typography>
