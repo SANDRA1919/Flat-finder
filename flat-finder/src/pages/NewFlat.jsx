@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Container, Typography, FormControlLabel, Checkbox, Paper, Grid, Box } from '@mui/material';
+import { TextField,
+   Button, 
+   Container, 
+   Typography, 
+   FormControlLabel, 
+   Checkbox, 
+   Paper, 
+   Grid, 
+   Box,
+   Dialog, 
+   DialogActions,
+   DialogContentText, 
+   DialogContent,
+   DialogTitle
+   } from '@mui/material';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../hooks/useAuth';
@@ -9,6 +23,7 @@ import { toast } from 'react-toastify';
 const NewFlat = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
   const [form, setForm] = useState({
     city: '',
     streetName: '',
@@ -37,29 +52,33 @@ const NewFlat = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const isConfirmed = window.confirm('Are you sure you want to save the flat?');
-
-    if(isConfirmed) {
-    try {
-      await addDoc(collection(db, 'flats'), {
-        ...form,
-        ownerId: user.uid,
-        streetNumber: parseInt(form.streetNumber),
-        areaSize: parseFloat(form.areaSize),
-        yearBuilt: parseInt(form.yearBuilt),
-        rentPrice: parseFloat(form.rentPrice),
-        dateAvailable: new Date(form.dateAvailable),
-        hasAC: form.hasAC,
-      });
-      toast.success('Flat added successfully');
-      navigate('/my-flats');
-    } catch (error) {
-      toast.error('Error adding flat');
-      console.error('Error adding flat:', error);
-    }
-  }
+    setOpenDialog(true);
 }
+
+const handleCloseDialog = () => {
+  setOpenDialog(false);
+};
+
+const handleSave = async () => {
+  try {
+    await addDoc(collection(db, 'flats'), {
+      ...form,
+      ownerId: user.uid,
+      streetNumber: parseInt(form.streetNumber),
+      areaSize: parseFloat(form.areaSize),
+      yearBuilt: parseInt(form.yearBuilt),
+      rentPrice: parseFloat(form.rentPrice),
+      dateAvailable: new Date(form.dateAvailable),
+      hasAC: form.hasAC,
+    });
+    toast.success('Flat added successfully');
+    navigate('/my-flats');
+  } catch (error) {
+    toast.error('Error adding flat');
+    console.error('Error adding flat:', error);
+  }
+  handleCloseDialog(); // Close dialog after saving
+};
 
   return (
     <Container maxWidth="md">
@@ -166,6 +185,22 @@ const NewFlat = () => {
           </Box>
         </Box>
       </Paper>
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>{"Save Flat"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to save this flat?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary" autoFocus>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

@@ -21,7 +21,12 @@ import {
   CardActions,
   Box,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Dialog, 
+  DialogActions,
+  DialogContentText, 
+  DialogContent,
+  DialogTitle,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -36,6 +41,8 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortType, setSortType] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedFlatId, setSelectedFlatId] = useState(null);
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -60,16 +67,19 @@ const Home = () => {
     fetchFlats();
   }, []);
 
-  const handleDelete = async (flatId) => {
-    const isConfirmed = window.confirm('Are you sure you want to delete this flat?');
-    if (isConfirmed) {
-      try {
-        await deleteDoc(doc(db, 'flats', flatId));
-        setFlats(flats.filter(flat => flat.id !== flatId));
-        toast.success('Flat deleted successfully');
-      } catch (error) {
-        toast.error('Error deleting flat');
-      }
+  const handleDelete = (flatId) => {
+    setSelectedFlatId(flatId);
+    setOpenDialog(true);
+  };
+  
+  const confirmDelete = async () => {
+    try {
+      await deleteDoc(doc(db, 'flats', selectedFlatId));
+      setFlats(flats.filter(flat => flat.id !== selectedFlatId));
+      toast.success('Flat deleted successfully');
+      setOpenDialog(false);
+    } catch (error) {
+      toast.error('Error deleting flat');
     }
   };
 
@@ -257,6 +267,27 @@ const Home = () => {
           </TableContainer>
         </Paper>
       )}
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Confirmation"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this flat?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDelete} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

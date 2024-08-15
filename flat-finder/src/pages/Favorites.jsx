@@ -23,7 +23,12 @@ import {
   MenuItem,
   FormControl,
   Select,
-  InputLabel
+  InputLabel,
+  Dialog, 
+  DialogActions,
+  DialogContentText, 
+  DialogContent,
+  DialogTitle
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
@@ -32,6 +37,8 @@ const Favorites = () => {
   const { user } = useAuth();
   const [favorites, setFavorites] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: 'city', direction: 'asc' });
+  const [openDialog, setOpenDialog] = useState(false);
+  const [flatToRemove, setFlatToRemove] = useState(null);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md')); // For screens 1024px and smaller
@@ -49,15 +56,20 @@ const Favorites = () => {
     fetchFavorites();
   }, [user]);
 
-  const handleRemoveFavorite = async (flatId) => {
-    const isConfirmed = window.confirm('Are you sure you want to delete from favorites?');
-    if (isConfirmed) {
+  const handleRemoveFavorite = (flatId) => {
+    setFlatToRemove(flatId); 
+    setOpenDialog(true); 
+  };
+
+  const handleConfirmRemoval = async () => {
+    if (flatToRemove) {
       try {
-        const flatRef = doc(db, 'flats', flatId);
+        const flatRef = doc(db, 'flats', flatToRemove);
         await updateDoc(flatRef, {
           favorites: arrayRemove(user.uid),
         });
-        setFavorites(favorites.filter(fav => fav.id !== flatId));
+        setFavorites(favorites.filter(fav => fav.id !== flatToRemove));
+        setOpenDialog(false); // Close the dialog
       } catch (error) {
         console.error('Error removing favorite:', error);
       }
@@ -207,6 +219,27 @@ const Favorites = () => {
           </TableContainer>
         )}
       </Paper>
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Removal"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to remove this flat from your favorites?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmRemoval} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
