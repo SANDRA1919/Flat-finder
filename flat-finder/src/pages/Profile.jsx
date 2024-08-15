@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { db, auth } from '../firebase'; // Asigură-te că ai importat auth de aici
+import { db, auth } from '../firebase';
 import { doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { deleteUser } from 'firebase/auth';
-import { Container, Paper, Typography, Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Container, Paper, Typography, Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack } from '@mui/material';
 import { toast } from 'react-toastify';
 
 const Profile = () => {
@@ -69,12 +69,17 @@ const Profile = () => {
             <strong>Admin:</strong> {isAdmin ? 'Yes' : 'No'}
           </Typography>
           <Box sx={{ mt: 2 }}>
-            <Button variant="contained" color="primary" onClick={() => navigate(`/profile-update/${user.uid}`)}>
-              Edit Profile
-            </Button>
-            <Button variant="contained" color="error" onClick={handleOpenDialog} sx={{ ml: 2 }}>
-              Delete Account
-            </Button>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }} // Stack in a column on xs and row on sm and above
+              spacing={2} // Space between the buttons
+            >
+              <Button variant="contained" color="primary" onClick={() => navigate(`/profile-update/${user.uid}`)}>
+                Edit Profile
+              </Button>
+              <Button variant="contained" color="error" onClick={handleOpenDialog}>
+                Delete Account
+              </Button>
+            </Stack>
           </Box>
         </Box>
         <Dialog
