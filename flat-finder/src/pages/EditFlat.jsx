@@ -4,11 +4,14 @@ import { db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import FlatForm from '../components/FlatForm';
 import { toast } from 'react-toastify';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 
 const EditFlat = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [flat, setFlat] = useState(null);
+  const [updatedFlat, setUpdatedFlat] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     const fetchFlat = async () => {
@@ -24,17 +27,49 @@ const EditFlat = () => {
     fetchFlat();
   }, [id, navigate]);
 
-  const handleUpdate = async (updatedFlat) => {
+  const handleFormSubmit = (data) => {
+    setUpdatedFlat(data);
+    setOpenDialog(true);
+  };
+
+  const handleUpdate = async () => {
     try {
       await updateDoc(doc(db, 'flats', id), updatedFlat);
       toast.success('Flat updated successfully');
       navigate('/my-flats');
     } catch (error) {
       toast.error('Error updating flat');
+    } finally {
+      setOpenDialog(false);
     }
   };
 
-  return flat ? <FlatForm flat={flat} onSubmit={handleUpdate} /> : <div>Loading...</div>;
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  return (
+    <>
+      {flat ? <FlatForm flat={flat} onSubmit={handleFormSubmit} /> : <div>Loading...</div>}
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Confirm Update</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to save the changes to this flat?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleUpdate} color="primary">
+            Save Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
 };
 
 export default EditFlat;

@@ -134,7 +134,7 @@ const Home = () => {
   );
 
   return (
-    <Container component="main" maxWidth="lg">
+    <Container component="main" maxWidth="xl">
       <Typography variant="h4" gutterBottom sx={{ mt: 3 }}>Available Flats</Typography>
 
       <Grid container spacing={isSmallScreen ? 2 : 3} alignItems="center" sx={{ mb: 2 }}>
@@ -193,6 +193,7 @@ const Home = () => {
                   <Typography variant="body1">Area: {flat.areaSize}</Typography>
                   <Typography variant="body1">Year Built: {flat.yearBuilt}</Typography>
                   <Typography variant="body1">Available Date: {flat.dateAvailable}</Typography>
+                  <Typography variant="body1">Has AC: {flat.hasAC ? 'Yes' : 'No'}</Typography>
                 </CardContent>
                 <CardActions>
                   <IconButton onClick={() => handleToggleFavorite(flat.id)}>
@@ -219,20 +220,19 @@ const Home = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>City</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>Street Name</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>Street Number</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>Price</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>Area</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>Year Built</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>Available Date</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>Favorite</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>Delete</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>Send Message</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>City</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Street Name</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Street Number</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Price</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Area</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Year Built</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Available Date</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Has AC</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredFlats.map((flat) => (
+                {filteredFlats.map(flat => (
                   <TableRow key={flat.id}>
                     <TableCell>{flat.city}</TableCell>
                     <TableCell>{flat.streetName}</TableCell>
@@ -241,21 +241,24 @@ const Home = () => {
                     <TableCell>{flat.areaSize}</TableCell>
                     <TableCell>{flat.yearBuilt}</TableCell>
                     <TableCell>{flat.dateAvailable}</TableCell>
+                    <TableCell>{flat.hasAC ? 'Yes' : 'No'}</TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleToggleFavorite(flat.id)}>
                         {flat.favorites && flat.favorites.includes(user.uid) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                       </IconButton>
-                    </TableCell>
-                    <TableCell>
                       {flat.ownerId === user.uid && (
                         <IconButton onClick={() => handleDelete(flat.id)}>
                           <DeleteIcon />
                         </IconButton>
                       )}
-                    </TableCell>
-                    <TableCell>
                       {flat.ownerId !== user.uid && (
-                        <Button onClick={() => handleSendMessage(flat.id)} startIcon={<SendIcon />} variant="contained" color="primary">
+                        <Button
+                          onClick={() => handleSendMessage(flat.id)}
+                          startIcon={<SendIcon />}
+                          variant="contained"
+                          color="primary"
+                          sx={{ marginLeft: "75px"}} // Pushes button to the right
+                        >
                           Send Message
                         </Button>
                       )}
@@ -267,25 +270,15 @@ const Home = () => {
           </TableContainer>
         </Paper>
       )}
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Delete Confirmation"}</DialogTitle>
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this flat?
-          </DialogContentText>
+          <DialogContentText>Are you sure you want to delete this flat?</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={confirmDelete} color="primary" autoFocus>
-            Confirm
-          </Button>
+          <Button onClick={() => setOpenDialog(false)} color="primary">Cancel</Button>
+          <Button onClick={confirmDelete} color="secondary">Delete</Button>
         </DialogActions>
       </Dialog>
     </Container>

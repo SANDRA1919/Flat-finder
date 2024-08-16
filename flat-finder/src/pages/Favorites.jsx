@@ -24,9 +24,9 @@ import {
   FormControl,
   Select,
   InputLabel,
-  Dialog, 
+  Dialog,
   DialogActions,
-  DialogContentText, 
+  DialogContentText,
   DialogContent,
   DialogTitle
 } from '@mui/material';
@@ -57,8 +57,8 @@ const Favorites = () => {
   }, [user]);
 
   const handleRemoveFavorite = (flatId) => {
-    setFlatToRemove(flatId); 
-    setOpenDialog(true); 
+    setFlatToRemove(flatId);
+    setOpenDialog(true);
   };
 
   const handleConfirmRemoval = async () => {
@@ -111,6 +111,7 @@ const Favorites = () => {
                 <MenuItem value="rentPrice">Price</MenuItem>
                 <MenuItem value="areaSize">Area</MenuItem>
                 <MenuItem value="dateAvailable">Available Date</MenuItem>
+                <MenuItem value="hasAC">Has AC</MenuItem> {/* Added sort option */}
               </Select>
             </FormControl>
             <Grid container spacing={2}>
@@ -123,6 +124,7 @@ const Favorites = () => {
                       <Typography variant="h6"><strong>Price:</strong> {flat.rentPrice}</Typography>
                       <Typography variant="h6"><strong>Area:</strong> {flat.areaSize}</Typography>
                       <Typography variant="h6"><strong>Available Date:</strong> {flat.dateAvailable.toDate().toDateString()}</Typography>
+                      <Typography variant="h6"><strong>Has AC:</strong> {flat.hasAC ? 'Yes' : 'No'}</Typography> {/* Added Has AC field */}
                     </CardContent>
                     <CardActions>
                       <Button onClick={() => handleRemoveFavorite(flat.id)} startIcon={<DeleteIcon />} color="error">
@@ -194,6 +196,15 @@ const Favorites = () => {
                     </TableSortLabel>
                   </TableCell>
                   <TableCell>
+                    <TableSortLabel
+                      active={sortConfig.key === 'hasAC'}
+                      direction={sortConfig.direction}
+                      onClick={() => handleSort('hasAC')}
+                    >
+                      <Typography variant="h6" fontWeight="bold">Has AC</Typography>
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
                     <Typography variant="h6" fontWeight="bold">Remove Favorite</Typography>
                   </TableCell>
                 </TableRow>
@@ -207,6 +218,7 @@ const Favorites = () => {
                     <TableCell><Typography>{flat.rentPrice}</Typography></TableCell>
                     <TableCell><Typography>{flat.areaSize}</Typography></TableCell>
                     <TableCell><Typography>{flat.dateAvailable.toDate().toDateString()}</Typography></TableCell>
+                    <TableCell><Typography>{flat.hasAC ? 'Yes' : 'No'}</Typography></TableCell> {/* Added Has AC field */}
                     <TableCell>
                       <IconButton onClick={() => handleRemoveFavorite(flat.id)}>
                         <DeleteIcon />

@@ -1,129 +1,159 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Checkbox, FormControlLabel, Box } from '@mui/material';
+import { db } from '../firebase';
+import { collection, addDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { useAuth } from '../hooks/useAuth';
+import {
+  Container,
+  TextField,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Box,
+  Typography,
+} from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-const FlatForm = ({ flat, onSubmit }) => {
-  const [formValues, setFormValues] = useState({
+const FlatForm = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [flat, setFlat] = useState({
     city: '',
     streetName: '',
     streetNumber: '',
-    areaSize: '',
-    hasAC: false,
-    yearBuilt: '',
     rentPrice: '',
-    dateAvailable: ''
+    areaSize: '',
+    yearBuilt: '',
+    dateAvailable: '',
+    hasAC: false,
   });
 
   useEffect(() => {
-    if (flat) {
-      setFormValues({
-        city: flat.city || '',
-        streetName: flat.streetName || '',
-        streetNumber: flat.streetNumber || '',
-        areaSize: flat.areaSize || '',
-        hasAC: flat.hasAC || false,
-        yearBuilt: flat.yearBuilt || '',
-        rentPrice: flat.rentPrice || '',
-        dateAvailable: flat.dateAvailable || ''
-      });
+    if (id) {
+      const fetchFlat = async () => {
+        const flatDoc = await getDoc(doc(db, 'flats', id));
+        if (flatDoc.exists()) {
+          setFlat(flatDoc.data());
+        }
+      };
+      fetchFlat();
     }
-  }, [flat]);
+  }, [id]);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: type === 'checkbox' ? checked : value
+    setFlat({
+      ...flat,
+      [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(formValues);
+    try {
+      if (id) {
+        await updateDoc(doc(db, 'flats', id), { ...flat, ownerId: user.uid });
+        toast.success('Flat updated successfully');
+      } else {
+        await addDoc(collection(db, 'flats'), { ...flat, ownerId: user.uid, favorites: [] });
+        toast.success('Flat added successfully');
+      }
+      navigate('/');
+    } catch (error) {
+      toast.error('Error submitting flat');
+    }
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-      <TextField
-        name="city"
-        label="City"
-        value={formValues.city}
-        onChange={handleChange}
-        fullWidth
-        required
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        name="streetName"
-        label="Street Name"
-        value={formValues.streetName}
-        onChange={handleChange}
-        fullWidth
-        required
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        name="streetNumber"
-        label="Street Number"
-        value={formValues.streetNumber}
-        onChange={handleChange}
-        fullWidth
-        required
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        name="areaSize"
-        label="Area Size"
-        value={formValues.areaSize}
-        onChange={handleChange}
-        fullWidth
-        required
-        sx={{ mb: 2 }}
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={formValues.hasAC}
-            onChange={handleChange}
-            name="hasAC"
-            color="primary"
-          />
-        }
-        label="Has AC"
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        name="yearBuilt"
-        label="Year Built"
-        value={formValues.yearBuilt}
-        onChange={handleChange}
-        fullWidth
-        required
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        name="rentPrice"
-        label="Rent Price"
-        value={formValues.rentPrice}
-        onChange={handleChange}
-        fullWidth
-        required
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        name="dateAvailable"
-        label="Date Available"
-        type="date"
-        value={formValues.dateAvailable}
-        onChange={handleChange}
-        fullWidth
-        required
-        InputLabelProps={{ shrink: true }}
-        sx={{ mb: 2 }}
-      />
-      <Button type="submit" variant="contained" color="primary">
-        Save
-      </Button>
-    </Box>
+    <Container maxWidth="sm">
+      <Typography variant="h4" gutterBottom>{id ? 'Edit Flat' : 'Add Flat'}</Typography>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="City"
+          name="city"
+          value={flat.city}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Street Name"
+          name="streetName"
+          value={flat.streetName}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Street Number"
+          name="streetNumber"
+          value={flat.streetNumber}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Rent Price"
+          name="rentPrice"
+          type="number"
+          value={flat.rentPrice}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Area Size"
+          name="areaSize"
+          type="number"
+          value={flat.areaSize}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Year Built"
+          name="yearBuilt"
+          type="number"
+          value={flat.yearBuilt}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Date Available"
+          name="dateAvailable"
+          type="date"
+          value={flat.dateAvailable}
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={flat.hasAC}
+              onChange={handleChange}
+              name="hasAC"
+              color="primary"
+            />
+          }
+          label="Has AC"
+        />
+        <Box mt={2}>
+          <Button type="submit" variant="contained" color="primary" fullWidth>{id ? 'Update' : 'Add'} Flat</Button>
+        </Box>
+      </form>
+    </Container>
   );
 };
 

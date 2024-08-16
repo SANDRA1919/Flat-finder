@@ -3,8 +3,10 @@ import { db } from '../firebase';
 import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import FlatCard from '../components/FlatCard';
 import { useAuth } from '../hooks/useAuth';
-import { Container, Paper, Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Container, Paper, Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography, Box, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete'; // Importing the Delete icon
+import CloseIcon from '@mui/icons-material/Close'; // Importing the Close icon
 
 const MyFlats = () => {
   const { user } = useAuth();
@@ -70,14 +72,19 @@ const MyFlats = () => {
         </Grid>
       </Paper>
       
-      {/* Delete Confirmation Dialog */}
+      {/* Enhanced Delete Confirmation Dialog */}
       <Dialog
         open={open}
         onClose={handleCloseDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Delete Flat?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          <Box display="flex" alignItems="center">
+            <DeleteIcon color="error" sx={{ mr: 2 }} />
+            <Typography variant="h6">Delete Flat?</Typography>
+          </Box>
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to delete this flat? This action cannot be undone.
@@ -87,9 +94,12 @@ const MyFlats = () => {
           <Button onClick={handleCloseDialog} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleDelete} color="primary" autoFocus>
+          <Button onClick={handleDelete} color="error" autoFocus>
             Delete
           </Button>
+          <IconButton onClick={handleCloseDialog} color="inherit">
+            <CloseIcon />
+          </IconButton>
         </DialogActions>
       </Dialog>
     </Container>
