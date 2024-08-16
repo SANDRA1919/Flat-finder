@@ -22,7 +22,7 @@ import Profile from './pages/Profile';
 import ProfileUpdate from './pages/ProfileUpdate';
 import AllUsers from './pages/AllUsers';
 import Inbox from './pages/Inbox';
-import SendMessage from './pages/SendMessange';  // Asigură-te că importul este corect
+import SendMessage from './pages/SendMessage';  // Asigură-te că importul este corect
 import './firebase';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
