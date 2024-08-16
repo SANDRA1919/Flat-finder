@@ -19,17 +19,17 @@ import {
   DialogTitle,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useAuth } from '../hooks/useAuth';  // Assuming you have this hook for authentication
+import { useAuth } from '../hooks/useAuth'; 
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PersonIcon from '@mui/icons-material/Person';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();  // Using the actual authentication hook
+  const { user, logout } = useAuth();  
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);  // State for managing the dialog
+  const [openDialog, setOpenDialog] = useState(false);  
 
-  // Handlers for dialog open/close and logout confirmation
+
   const handleDialogOpen = () => {
     setOpenDialog(true);
   };
@@ -100,11 +100,11 @@ const Navbar = () => {
           </Typography>
           {user && (
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 2 }}>
-              {user.isAdmin ? (
-                <AdminPanelSettingsIcon sx={{ marginRight: 1 }} />
-              ) : (
-                <PersonIcon sx={{ marginRight: 1 }} />
-              )}
+                {user.isAdmin ? (
+                  <AdminPanelSettingsIcon sx={{ marginRight: 1 }} />
+                ) : (
+                  <PersonIcon sx={{ marginRight: 1 }} />
+                )}
               <Typography variant="h6" component="div">
                 Welcome, {user.firstName} {user.lastName}
               </Typography>

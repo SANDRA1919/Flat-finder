@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -17,12 +16,16 @@ export const AuthProvider = ({ children }) => {
   const refreshCurrentUser = async () => {
     if (auth.currentUser) {
       const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
-      setCurrentUser({
-        uid: auth.currentUser.uid,
-        email: auth.currentUser.email,
-        firstName: userDoc.data().firstName,
-        lastName: userDoc.data().lastName,
-      });
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setCurrentUser({
+          uid: auth.currentUser.uid,
+          email: auth.currentUser.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          isAdmin: userData.isAdmin || false, // Ensure isAdmin is included
+        });
+      }
     }
   };
 
@@ -39,17 +42,21 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
-        setCurrentUser({
-          uid: user.uid,
-          email: user.email,
-          firstName: userDoc.data().firstName,
-          lastName: userDoc.data().lastName,
-        });
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setCurrentUser({
+            uid: user.uid,
+            email: user.email,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            isAdmin: userData.isAdmin || false, // Ensure isAdmin is included
+          });
+        }
       } else {
         setCurrentUser(null);
       }
     });
-
+  
     return unsubscribe;
   }, []);
 
