@@ -1,24 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase';
-import { collection, addDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { useAuth } from '../hooks/useAuth';
-import {
-  Container,
-  TextField,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Box,
-  Typography,
-} from '@mui/material';
-import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { Container, TextField, Button, Checkbox, FormControlLabel, Box, Typography } from '@mui/material';
 
-const FlatForm = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const [flat, setFlat] = useState({
+const FlatForm = ({ flat, onSubmit }) => {
+  const [formState, setFormState] = useState(flat || {
     city: '',
     streetName: '',
     streetNumber: '',
@@ -30,48 +14,29 @@ const FlatForm = () => {
   });
 
   useEffect(() => {
-    if (id) {
-      const fetchFlat = async () => {
-        const flatDoc = await getDoc(doc(db, 'flats', id));
-        if (flatDoc.exists()) {
-          setFlat(flatDoc.data());
-        }
-      };
-      fetchFlat();
-    }
-  }, [id]);
+    setFormState(flat);
+  }, [flat]);
 
   const handleChange = (e) => {
-    setFlat({
-      ...flat,
+    setFormState({
+      ...formState,
       [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value,
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      if (id) {
-        await updateDoc(doc(db, 'flats', id), { ...flat, ownerId: user.uid });
-        toast.success('Flat updated successfully');
-      } else {
-        await addDoc(collection(db, 'flats'), { ...flat, ownerId: user.uid, favorites: [] });
-        toast.success('Flat added successfully');
-      }
-      navigate('/');
-    } catch (error) {
-      toast.error('Error submitting flat');
-    }
+    onSubmit(formState);
   };
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>{id ? 'Edit Flat' : 'Add Flat'}</Typography>
+      <Typography variant="h4" gutterBottom>{flat ? 'Edit Flat' : 'Add Flat'}</Typography>
       <form onSubmit={handleSubmit}>
         <TextField
           label="City"
           name="city"
-          value={flat.city}
+          value={formState.city}
           onChange={handleChange}
           required
           fullWidth
@@ -80,7 +45,7 @@ const FlatForm = () => {
         <TextField
           label="Street Name"
           name="streetName"
-          value={flat.streetName}
+          value={formState.streetName}
           onChange={handleChange}
           required
           fullWidth
@@ -89,7 +54,7 @@ const FlatForm = () => {
         <TextField
           label="Street Number"
           name="streetNumber"
-          value={flat.streetNumber}
+          value={formState.streetNumber}
           onChange={handleChange}
           required
           fullWidth
@@ -99,7 +64,7 @@ const FlatForm = () => {
           label="Rent Price"
           name="rentPrice"
           type="number"
-          value={flat.rentPrice}
+          value={formState.rentPrice}
           onChange={handleChange}
           required
           fullWidth
@@ -109,7 +74,7 @@ const FlatForm = () => {
           label="Area Size"
           name="areaSize"
           type="number"
-          value={flat.areaSize}
+          value={formState.areaSize}
           onChange={handleChange}
           required
           fullWidth
@@ -119,7 +84,7 @@ const FlatForm = () => {
           label="Year Built"
           name="yearBuilt"
           type="number"
-          value={flat.yearBuilt}
+          value={formState.yearBuilt}
           onChange={handleChange}
           required
           fullWidth
@@ -129,7 +94,7 @@ const FlatForm = () => {
           label="Date Available"
           name="dateAvailable"
           type="date"
-          value={flat.dateAvailable}
+          value={formState.dateAvailable}
           onChange={handleChange}
           required
           fullWidth
@@ -141,7 +106,7 @@ const FlatForm = () => {
         <FormControlLabel
           control={
             <Checkbox
-              checked={flat.hasAC}
+              checked={formState.hasAC}
               onChange={handleChange}
               name="hasAC"
               color="primary"
@@ -150,7 +115,7 @@ const FlatForm = () => {
           label="Has AC"
         />
         <Box mt={2}>
-          <Button type="submit" variant="contained" color="primary" fullWidth>{id ? 'Update' : 'Add'} Flat</Button>
+          <Button type="submit" variant="contained" color="primary" fullWidth>{flat ? 'Update' : 'Add'} Flat</Button>
         </Box>
       </form>
     </Container>

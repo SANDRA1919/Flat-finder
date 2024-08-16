@@ -15,12 +15,16 @@ const EditFlat = () => {
 
   useEffect(() => {
     const fetchFlat = async () => {
-      const flatDoc = await getDoc(doc(db, 'flats', id));
-      if (flatDoc.exists()) {
-        setFlat(flatDoc.data());
-      } else {
-        toast.error('Flat not found');
-        navigate('/');
+      try {
+        const flatDoc = await getDoc(doc(db, 'flats', id));
+        if (flatDoc.exists()) {
+          setFlat(flatDoc.data());
+        } else {
+          toast.error('Flat not found');
+          navigate('/');
+        }
+      } catch (error) {
+        toast.error('Error fetching flat');
       }
     };
 
