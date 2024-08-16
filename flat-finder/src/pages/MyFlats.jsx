@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import FlatCard from '../components/FlatCard';
 import { useAuth } from '../hooks/useAuth';
-import { Container, Paper, Grid, Button } from '@mui/material';
+import { Container, Paper, Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const MyFlats = () => {
   const { user } = useAuth();
   const [flats, setFlats] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [flatToDelete, setFlatToDelete] = useState(null);
 
   useEffect(() => {
     const fetchMyFlats = async () => {
@@ -25,8 +27,22 @@ const MyFlats = () => {
     fetchMyFlats();
   }, [user]);
 
-  const handleDelete = (flatId) => {
-    setFlats(flats.filter(flat => flat.id !== flatId));
+  const handleOpenDialog = (flatId) => {
+    setFlatToDelete(flatId);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setFlatToDelete(null);
+  };
+
+  const handleDelete = async () => {
+    if (flatToDelete) {
+      await deleteDoc(doc(db, 'flats', flatToDelete));
+      setFlats(flats.filter(flat => flat.id !== flatToDelete));
+      handleCloseDialog();
+    }
   };
 
   const handleToggleFavorite = (flatId) => {
@@ -43,12 +59,39 @@ const MyFlats = () => {
         </Button>
         <Grid container spacing={3}>
           {flats.map((flat) => (
-            <Grid item xs={12} key={flat.id}>
-              <FlatCard flat={flat} onDelete={handleDelete} onToggleFavorite={handleToggleFavorite} />
+            <Grid item xs={12} md={6} key={flat.id}>
+              <FlatCard 
+                flat={flat} 
+                onDelete={() => handleOpenDialog(flat.id)} 
+                onToggleFavorite={handleToggleFavorite} 
+              />
             </Grid>
           ))}
         </Grid>
       </Paper>
+      
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={open}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Flat?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this flat? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
