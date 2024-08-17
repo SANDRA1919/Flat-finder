@@ -75,6 +75,7 @@ const Register = () => {
           Register
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          {/* Form Fields */}
           <TextField
             margin="normal"
             fullWidth
@@ -179,6 +180,7 @@ const Register = () => {
               {errors.acceptTerms}
             </Typography>
           )}
+          {/* Register Button */}
           <Button
             type="submit"
             fullWidth
@@ -186,6 +188,16 @@ const Register = () => {
             sx={{ mt: 2, mb: 1, backgroundColor: '#00796b', '&:hover': { backgroundColor: '#004d40' } }}
           >
             Register
+          </Button>
+
+          {/* Login Redirect Button */}
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={{ mb: 2, color: '#00796b', borderColor: '#00796b', '&:hover': { borderColor: '#004d40', color: '#004d40' } }}
+            onClick={() => navigate('/login')}
+          >
+            Already have an account? Login
           </Button>
         </Box>
       </Paper>

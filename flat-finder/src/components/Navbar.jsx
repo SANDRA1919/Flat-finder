@@ -28,7 +28,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);  
-
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false); // State for login prompt dialog
 
   const handleDialogOpen = () => {
     setOpenDialog(true);
@@ -48,9 +48,21 @@ const Navbar = () => {
     setDrawerOpen(open);
   };
 
+  const handleHomeClick = () => {
+    if (!user) {
+      setShowLoginPrompt(true);
+    } else {
+      navigate('/');
+    }
+  };
+
+  const closeLoginPrompt = () => {
+    setShowLoginPrompt(false);
+  };
+
   const menuItems = (
     <>
-      <ListItem button component={Link} to="/">
+      <ListItem button onClick={handleHomeClick}>
         <ListItemText primary="Home" />
       </ListItem>
       {user ? (
@@ -93,18 +105,24 @@ const Navbar = () => {
     <AppBar position="static" sx={{ backgroundColor: 'emerald' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              FlatFinder
-            </Link>
-          </Typography>
+          <IconButton
+            onClick={handleHomeClick}
+            disabled={!user}
+            sx={{ p: 0 }} // Removes padding from the button
+          >
+            <img
+              src="/img/flat-finder-high-resolution-logo-black-transparent-white.png"
+              alt="Flat Finder Logo"
+              style={{ height: '40px', marginRight: '10px' }}
+            />
+          </IconButton>
           {user && (
             <Box sx={{ display: 'flex', alignItems: 'center', marginLeft: 2 }}>
-                {user.isAdmin ? (
-                  <AdminPanelSettingsIcon sx={{ marginRight: 1 }} />
-                ) : (
-                  <PersonIcon sx={{ marginRight: 1 }} />
-                )}
+              {user.isAdmin ? (
+                <AdminPanelSettingsIcon sx={{ marginRight: 1 }} />
+              ) : (
+                <PersonIcon sx={{ marginRight: 1 }} />
+              )}
               <Typography variant="h6" component="div">
                 Welcome, {user.firstName} {user.lastName}
               </Typography>
@@ -124,7 +142,7 @@ const Navbar = () => {
         </Box>
 
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-          <Button color="inherit" component={Link} to="/">
+          <Button color="inherit" onClick={handleHomeClick}>
             Home
           </Button>
           {user ? (
@@ -194,6 +212,32 @@ const Navbar = () => {
           </Button>
           <Button onClick={handleLogoutConfirm} color="primary" autoFocus>
             Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Login Prompt Dialog */}
+      <Dialog
+        open={showLoginPrompt}
+        onClose={closeLoginPrompt}
+        aria-labelledby="login-prompt-dialog-title"
+        aria-describedby="login-prompt-dialog-description"
+      >
+        <DialogTitle id="login-prompt-dialog-title">Not Logged In</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="login-prompt-dialog-description">
+            It seems you are not logged in. Let’s fix that.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {navigate('/login'); closeLoginPrompt();}} color="primary">
+            Login
+          </Button>
+          <Button onClick={() => {navigate('/register'); closeLoginPrompt();}} color="primary">
+            Register
+          </Button>
+          <Button onClick={closeLoginPrompt} color="primary">
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>

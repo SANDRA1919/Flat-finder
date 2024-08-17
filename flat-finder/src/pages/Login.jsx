@@ -82,6 +82,16 @@ const Login = () => {
           >
             Login
           </Button>
+
+            {/* Register Redirect Button */}
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={{ mb: 2, color: '#00796b', borderColor: '#00796b', '&:hover': { borderColor: '#004d40', color: '#004d40' } }}
+            onClick={() => navigate('/register')}
+          >
+            Don`t have an account?   Register
+          </Button>
         </Box>
       </Paper>
     </Container>
