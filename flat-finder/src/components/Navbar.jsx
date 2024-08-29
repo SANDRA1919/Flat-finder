@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -17,18 +17,42 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Badge,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useAuth } from '../hooks/useAuth'; 
+import { useAuth } from '../hooks/useAuth';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PersonIcon from '@mui/icons-material/Person';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();  
+  const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);  
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false); // State for login prompt dialog
+  const [openDialog, setOpenDialog] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnreadMessages = async () => {
+      if (user) {
+        try {
+          const messagesQuery = query(collection(db, 'messages'), where('recipientId', '==', user.uid), where('isRead', '==', false));
+          const messagesSnapshot = await getDocs(messagesQuery);
+          setUnreadMessagesCount(messagesSnapshot.size);
+        } catch (error) {
+          console.error('Error fetching unread messages:', error);
+        }
+      }
+    };
+
+    fetchUnreadMessages();
+
+    const intervalId = setInterval(fetchUnreadMessages, 30000);
+
+    return () => clearInterval(intervalId);
+  }, [user]);
 
   const handleDialogOpen = () => {
     setOpenDialog(true);
@@ -60,46 +84,9 @@ const Navbar = () => {
     setShowLoginPrompt(false);
   };
 
-  const menuItems = (
-    <>
-      <ListItem button onClick={handleHomeClick}>
-        <ListItemText primary="Home" />
-      </ListItem>
-      {user ? (
-        <>
-          <ListItem button component={Link} to="/inbox">
-            <ListItemText primary="Inbox" />
-          </ListItem>
-          <ListItem button component={Link} to="/my-flats">
-            <ListItemText primary="My Flats" />
-          </ListItem>
-          <ListItem button component={Link} to="/favorites">
-            <ListItemText primary="Favorites" />
-          </ListItem>
-          <ListItem button component={Link} to="/profile">
-            <ListItemText primary="Profile" />
-          </ListItem>
-          {user.isAdmin && (
-            <ListItem button component={Link} to="/all-users">
-              <ListItemText primary="All users" />
-            </ListItem>
-          )}
-          <ListItem button onClick={handleDialogOpen}>
-            <ListItemText primary="Logout" />
-          </ListItem>
-        </>
-      ) : (
-        <>
-          <ListItem button component={Link} to="/login">
-            <ListItemText primary="Login" />
-          </ListItem>
-          <ListItem button component={Link} to="/register">
-            <ListItemText primary="Register" />
-          </ListItem>
-        </>
-      )}
-    </>
-  );
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <AppBar position="static" sx={{ backgroundColor: 'emerald' }}>
@@ -108,7 +95,7 @@ const Navbar = () => {
           <IconButton
             onClick={handleHomeClick}
             disabled={!user}
-            sx={{ p: 0 }} // Removes padding from the button
+            sx={{ p: 0 }}
           >
             <img
               src="/img/flat-finder-high-resolution-logo-black-transparent-white.png"
@@ -142,13 +129,17 @@ const Navbar = () => {
         </Box>
 
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-          <Button color="inherit" onClick={handleHomeClick}>
-            Home
-          </Button>
+          {user && (
+            <Button color="inherit" onClick={handleHomeClick}>
+              Home
+            </Button>
+          )}
           {user ? (
             <>
               <Button color="inherit" component={Link} to="/inbox">
-                Inbox
+                <Badge badgeContent={unreadMessagesCount} color="error">
+                  Inbox
+                </Badge>
               </Button>
               <Button color="inherit" component={Link} to="/my-flats">
                 My Flats
@@ -188,7 +179,44 @@ const Navbar = () => {
           onClick={toggleDrawer(false)}
           onKeyDown={toggleDrawer(false)}
         >
-          <List>{menuItems}</List>
+          <List>
+            <ListItem button onClick={handleHomeClick}>
+              <ListItemText primary="Home" />
+            </ListItem>
+            {user ? (
+              <>
+                <ListItem button component={Link} to="/inbox">
+                  <ListItemText primary="Inbox" />
+                </ListItem>
+                <ListItem button component={Link} to="/my-flats">
+                  <ListItemText primary="My Flats" />
+                </ListItem>
+                <ListItem button component={Link} to="/favorites">
+                  <ListItemText primary="Favorites" />
+                </ListItem>
+                <ListItem button component={Link} to="/profile">
+                  <ListItemText primary="Profile" />
+                </ListItem>
+                {user.isAdmin && (
+                  <ListItem button component={Link} to="/all-users">
+                    <ListItemText primary="All users" />
+                  </ListItem>
+                )}
+                <ListItem button onClick={handleDialogOpen}>
+                  <ListItemText primary="Logout" />
+                </ListItem>
+              </>
+            ) : (
+              <>
+                <ListItem button component={Link} to="/login">
+                  <ListItemText primary="Login" />
+                </ListItem>
+                <ListItem button component={Link} to="/register">
+                  <ListItemText primary="Register" />
+                </ListItem>
+              </>
+            )}
+          </List>
           <Divider />
         </Box>
       </Drawer>
@@ -208,10 +236,10 @@ const Navbar = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">
-            No
+            Cancel
           </Button>
-          <Button onClick={handleLogoutConfirm} color="primary" autoFocus>
-            Yes
+          <Button onClick={handleLogoutConfirm} color="primary">
+            Logout
           </Button>
         </DialogActions>
       </Dialog>
@@ -221,23 +249,16 @@ const Navbar = () => {
         open={showLoginPrompt}
         onClose={closeLoginPrompt}
         aria-labelledby="login-prompt-dialog-title"
-        aria-describedby="login-prompt-dialog-description"
       >
-        <DialogTitle id="login-prompt-dialog-title">Not Logged In</DialogTitle>
+        <DialogTitle id="login-prompt-dialog-title">Login Required</DialogTitle>
         <DialogContent>
-          <DialogContentText id="login-prompt-dialog-description">
-            It seems you are not logged in. Let’s fix that.
+          <DialogContentText>
+            You need to log in to access this page.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => {navigate('/login'); closeLoginPrompt();}} color="primary">
-            Login
-          </Button>
-          <Button onClick={() => {navigate('/register'); closeLoginPrompt();}} color="primary">
-            Register
-          </Button>
           <Button onClick={closeLoginPrompt} color="primary">
-            Cancel
+            Close
           </Button>
         </DialogActions>
       </Dialog>

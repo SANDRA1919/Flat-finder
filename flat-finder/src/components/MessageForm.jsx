@@ -1,4 +1,3 @@
-// src/components/MessageForm.jsx
 import React, { useState } from 'react';
 import { Button, TextField, Stack } from '@mui/material';
 import { db } from '../firebase';
@@ -20,6 +19,7 @@ const MessageForm = ({ flatId, recipientId, senderId, senderEmail }) => {
         senderEmail,
         message,
         timestamp: timestamp.toISOString(), // Save timestamp as ISO string
+        isRead: false // Messages are initially unread
       });
       setMessage(''); // Clear message input after sending
     } catch (error) {

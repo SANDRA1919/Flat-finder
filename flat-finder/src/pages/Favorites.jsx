@@ -41,7 +41,7 @@ const Favorites = () => {
   const [flatToRemove, setFlatToRemove] = useState(null);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // For screens 1024px and smaller
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -69,7 +69,7 @@ const Favorites = () => {
           favorites: arrayRemove(user.uid),
         });
         setFavorites(favorites.filter(fav => fav.id !== flatToRemove));
-        setOpenDialog(false); // Close the dialog
+        setOpenDialog(false);
       } catch (error) {
         console.error('Error removing favorite:', error);
       }
@@ -84,7 +84,15 @@ const Favorites = () => {
     setSortConfig({ key, direction });
   };
 
-  const sortedFavorites = [...favorites].sort((a, b) => {
+  // Modificare: Pregătirea datelor pentru afișare, cu verificarea `dateAvailable`
+  const formattedFavorites = favorites.map(flat => ({
+    ...flat,
+    dateAvailable: flat.dateAvailable && typeof flat.dateAvailable.toDate === 'function'
+      ? flat.dateAvailable.toDate().toDateString()
+      : new Date(flat.dateAvailable).toDateString()
+  }));
+
+  const sortedFavorites = [...formattedFavorites].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
       return sortConfig.direction === 'asc' ? -1 : 1;
     }
@@ -111,7 +119,7 @@ const Favorites = () => {
                 <MenuItem value="rentPrice">Price</MenuItem>
                 <MenuItem value="areaSize">Area</MenuItem>
                 <MenuItem value="dateAvailable">Available Date</MenuItem>
-                <MenuItem value="hasAC">Has AC</MenuItem> {/* Added sort option */}
+                <MenuItem value="hasAC">Has AC</MenuItem>
               </Select>
             </FormControl>
             <Grid container spacing={2}>
@@ -123,8 +131,8 @@ const Favorites = () => {
                       <Typography variant="h6"><strong>Street:</strong> {flat.streetName} {flat.streetNumber}</Typography>
                       <Typography variant="h6"><strong>Price:</strong> {flat.rentPrice}</Typography>
                       <Typography variant="h6"><strong>Area:</strong> {flat.areaSize}</Typography>
-                      <Typography variant="h6"><strong>Available Date:</strong> {flat.dateAvailable.toDate().toDateString()}</Typography>
-                      <Typography variant="h6"><strong>Has AC:</strong> {flat.hasAC ? 'Yes' : 'No'}</Typography> {/* Added Has AC field */}
+                      <Typography variant="h6"><strong>Available Date:</strong> {flat.dateAvailable}</Typography>
+                      <Typography variant="h6"><strong>Has AC:</strong> {flat.hasAC ? 'Yes' : 'No'}</Typography>
                     </CardContent>
                     <CardActions>
                       <Button onClick={() => handleRemoveFavorite(flat.id)} startIcon={<DeleteIcon />} color="error">
@@ -217,8 +225,8 @@ const Favorites = () => {
                     <TableCell><Typography>{flat.streetNumber}</Typography></TableCell>
                     <TableCell><Typography>{flat.rentPrice}</Typography></TableCell>
                     <TableCell><Typography>{flat.areaSize}</Typography></TableCell>
-                    <TableCell><Typography>{flat.dateAvailable.toDate().toDateString()}</Typography></TableCell>
-                    <TableCell><Typography>{flat.hasAC ? 'Yes' : 'No'}</Typography></TableCell> {/* Added Has AC field */}
+                    <TableCell><Typography>{flat.dateAvailable}</Typography></TableCell>
+                    <TableCell><Typography>{flat.hasAC ? 'Yes' : 'No'}</Typography></TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleRemoveFavorite(flat.id)}>
                         <DeleteIcon />

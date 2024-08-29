@@ -51,8 +51,12 @@ const Register = () => {
     if (!validateForm()) return;
 
     try {
+      // Creare utilizator în Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
       const user = userCredential.user;
+      console.log("User created: ", user.uid);
+
+      // Salvare date utilizator în Firestore
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         firstName: form.firstName,
@@ -61,10 +65,17 @@ const Register = () => {
         birthDate: form.birthDate,
         isAdmin: false,
       });
+
+      // Afișează mesaj de succes și redirecționează la pagina de login
       toast.success('Registration successful');
       navigate('/login');
     } catch (error) {
-      toast.error('Error registering');
+      console.error("Error occurred: ", error);
+      if (error.code === 'auth/email-already-in-use') {
+        toast.error('This email is already registered. Please log in.');
+      } else {
+        toast.error(`Error: ${error.message}`);
+      }
     }
   };
 

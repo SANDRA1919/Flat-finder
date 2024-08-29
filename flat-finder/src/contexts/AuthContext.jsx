@@ -12,6 +12,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);  // New loading state
 
   const refreshCurrentUser = async () => {
     if (auth.currentUser) {
@@ -55,13 +56,14 @@ export const AuthProvider = ({ children }) => {
       } else {
         setCurrentUser(null);
       }
+      setLoading(false);  // Set loading to false once authentication is determined
     });
   
     return unsubscribe;
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user: currentUser, refreshCurrentUser, logout }}>
+    <AuthContext.Provider value={{ user: currentUser, loading, refreshCurrentUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

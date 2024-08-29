@@ -28,9 +28,8 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';  // Iconițe pentru inimă
+import { MdDelete } from 'react-icons/md';              // Iconiță pentru coșul de gunoi
 import SendIcon from '@mui/icons-material/Send';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -197,11 +196,11 @@ const Home = () => {
                 </CardContent>
                 <CardActions>
                   <IconButton onClick={() => handleToggleFavorite(flat.id)}>
-                    {flat.favorites && flat.favorites.includes(user.uid) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                    {flat.favorites && flat.favorites.includes(user.uid) ? <FaHeart /> : <FaRegHeart />}
                   </IconButton>
                   {flat.ownerId === user.uid && (
                     <IconButton onClick={() => handleDelete(flat.id)}>
-                      <DeleteIcon />
+                      <MdDelete />
                     </IconButton>
                   )}
                   {flat.ownerId !== user.uid && (
@@ -220,15 +219,15 @@ const Home = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>City</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Street Name</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Street Number</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Price</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Area</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Year Built</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Available Date</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Has AC</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Actions</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>City</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Street Name</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Street Number</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Price</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Area</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Year Built</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Available Date</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Has AC</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Fav/Unfav</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -244,11 +243,11 @@ const Home = () => {
                     <TableCell>{flat.hasAC ? 'Yes' : 'No'}</TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleToggleFavorite(flat.id)}>
-                        {flat.favorites && flat.favorites.includes(user.uid) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                        {flat.favorites && flat.favorites.includes(user.uid) ? <FaHeart /> : <FaRegHeart />}
                       </IconButton>
                       {flat.ownerId === user.uid && (
                         <IconButton onClick={() => handleDelete(flat.id)}>
-                          <DeleteIcon />
+                          <MdDelete />
                         </IconButton>
                       )}
                       {flat.ownerId !== user.uid && (
