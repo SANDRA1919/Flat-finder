@@ -42,7 +42,8 @@ const Inbox = () => {
   }, [user]);
 
   const handleViewMessage = (message) => {
-    setSelectedMessage(message);
+    const formattedTimestamp = new Date(message.timestamp).toLocaleString(); // Formatează timestamp-ul
+    setSelectedMessage({ ...message, formattedTimestamp });
     setViewDialogOpen(true);
   };
 
@@ -204,6 +205,9 @@ const Inbox = () => {
             <DialogContent>
               <Typography variant="body1" sx={{ mb: 2, color: '#004d40', textAlign: 'center', fontWeight: 'bold' }}>
                 {selectedMessage?.message}
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#00796b', textAlign: 'center' }}>
+                Sent on: {selectedMessage?.formattedTimestamp} {/* Afișează data și ora */}
               </Typography>
             </DialogContent>
             <DialogActions>
