@@ -108,11 +108,11 @@ const AllUsers = () => {
                     backgroundColor: '#e0e0e0',
                     transition: 'background-color 0.3s ease', 
                   },
-                  transition: 'transform 0.2s ease', 
-                  transform: 'scale(1)', 
-                  '&:hover': {
-                    transform: 'scale(1.02)', 
-                  },
+                    transition: 'transform 0.2s ease', 
+                    transform: 'scale(1)', 
+                    '&:hover': {
+                      transform: 'scale(1.02)', 
+                    },
                 }}
               >
                 <TableCell

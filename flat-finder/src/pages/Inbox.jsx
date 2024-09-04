@@ -104,7 +104,22 @@ const Inbox = () => {
   };
 
   return (
-    <div>
+    <Box
+    sx={{
+      minHeight: '100vh',
+      width: '100vw', // Ensures full-width coverage
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundImage: 'url(/img/pexels-nietjuh-1809342.jpg)', // Path to your background image
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'absolute', // Ensure the image covers the whole viewport
+      top: 60,
+      left: 0,
+    }}
+  >
       <Container
         component="main"
         maxWidth="md"
@@ -229,7 +244,7 @@ const Inbox = () => {
           </Dialog>
         </Paper>
       </Container>
-    </div>
+    </Box>
   );
 };
 

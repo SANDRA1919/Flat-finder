@@ -54,8 +54,24 @@ const MyFlats = () => {
   };
 
   return (
+    <Box
+    sx={{
+      minHeight: '100vh',
+      width: '100vw', // Ensures full-width coverage
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundImage: 'url(/img/myflats.jpg)', // Path to your background image
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'absolute', // Ensure the image covers the whole viewport
+      top: 60,
+      left: 0,
+    }}
+  >
     <Container component="main" maxWidth="lg">
-      <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+      <Paper elevation={3} sx={{ p: 3, mt: 3, backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
         <Button component={Link} to="/new-flat" variant="contained" color="primary" sx={{ mb: 2 }}>
           Add New Flat
         </Button>
@@ -97,12 +113,10 @@ const MyFlats = () => {
           <Button onClick={handleDelete} color="error" autoFocus>
             Delete
           </Button>
-          <IconButton onClick={handleCloseDialog} color="inherit">
-            <CloseIcon />
-          </IconButton>
         </DialogActions>
       </Dialog>
     </Container>
+    </Box>
   );
 };
 

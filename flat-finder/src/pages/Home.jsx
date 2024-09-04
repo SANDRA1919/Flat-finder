@@ -133,6 +133,22 @@ const Home = () => {
   );
 
   return (
+<Box
+  sx={{
+    minHeight: '100vh',
+    width: '100vw', // Ensures full-width coverage
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundImage: 'url(/img/home2.jpg)', // Path to your background image
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    position: 'absolute', // Ensure the image covers the whole viewport
+    top: 60,
+    left: 0,
+  }}
+>
     <Container component="main" maxWidth="xl">
       <Typography variant="h4" gutterBottom sx={{ mt: 3 }}>Available Flats</Typography>
 
@@ -183,7 +199,7 @@ const Home = () => {
         <Grid container spacing={2}>
           {filteredFlats.map(flat => (
             <Grid item xs={12} key={flat.id}>
-              <Card sx={{ mb: 2 }}>
+              <Card sx={{ mb: 2, backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
                 <CardContent>
                   <Typography variant="h6" gutterBottom>City: {flat.city}</Typography>
                   <Typography variant="subtitle1" gutterBottom>Street Name: {flat.streetName}</Typography>
@@ -214,11 +230,11 @@ const Home = () => {
           ))}
         </Grid>
       ) : (
-        <Paper elevation={3} sx={{ p: 3, mt: 3, border: '2px solid green', borderRadius: '8px' }}>
-          <TableContainer component={Paper} sx={{ border: '1px solid green', borderRadius: '4px' }}>
-            <Table>
+        <Paper elevation={3} sx={{ p: 3, mt: 3, border: '2px solid green', borderRadius: '8px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
+          <TableContainer component={Paper} sx={{ border: '1px solid green', borderRadius: '4px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
+            <Table >
               <TableHead>
-                <TableRow>
+                <TableRow >
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>City</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Street Name</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Street Number</TableCell>
@@ -232,7 +248,20 @@ const Home = () => {
               </TableHead>
               <TableBody>
                 {filteredFlats.map(flat => (
-                  <TableRow key={flat.id}>
+                  <TableRow key={flat.id}                
+                   sx={{
+                    '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' },
+                    '&:nth-of-type(even)': { backgroundColor: '#ffffff' },
+                    '&:hover': {
+                      backgroundColor: '#e0e0e0',
+                      transition: 'background-color 0.3s ease', 
+                    },
+                      transition: 'transform 0.2s ease', 
+                      transform: 'scale(1)', 
+                      '&:hover': {
+                        transform: 'scale(1.02)', 
+                      },
+                  }}>
                     <TableCell>{flat.city}</TableCell>
                     <TableCell>{flat.streetName}</TableCell>
                     <TableCell>{flat.streetNumber}</TableCell>
@@ -281,6 +310,7 @@ const Home = () => {
         </DialogActions>
       </Dialog>
     </Container>
+    </Box>
   );
 };
 

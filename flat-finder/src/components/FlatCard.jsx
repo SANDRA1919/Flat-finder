@@ -1,4 +1,3 @@
-// src/components/FlatCard.jsx
 import React, { useState } from 'react';
 import {
   Card,
@@ -73,7 +72,7 @@ const FlatCard = ({ flat, onDelete, onToggleFavorite }) => {
 
   return (
     <>
-      <Card sx={{ borderColor: 'green', backgroundColor: 'lightgreen', borderRadius: '8px', boxShadow: 3 }}>
+      <Card sx={{ borderColor: 'green', backgroundColor: 'lightgreen', borderRadius: '8px', boxShadow: 3,  }}>
         <CardContent>
           <Typography variant="h5">City: {flat.city}</Typography>
           <Typography variant="body2">Street name: {flat.streetName}</Typography>

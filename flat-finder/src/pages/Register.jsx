@@ -80,6 +80,22 @@ const Register = () => {
   };
 
   return (
+    <Box
+      sx={{
+        minHeight: '100vh',
+        width: '100vw', // Ensures full-width coverage
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: 'url(/img/home.jpg)', // Path to your background image
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        position: 'absolute', // Ensure the image covers the whole viewport
+        top: 60,
+        left: 0,
+      }}
+    >
     <Container component="main" maxWidth="sm" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
       <Paper elevation={6} sx={{ padding: 2, maxWidth: 400, backgroundColor: '#e0f2f1', overflow: 'auto' }}>
         <Typography variant="h5" align="center" gutterBottom sx={{ color: '#004d40' }}>
@@ -213,6 +229,7 @@ const Register = () => {
         </Box>
       </Paper>
     </Container>
+    </Box>
   );
 };
 
