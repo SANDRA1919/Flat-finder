@@ -106,7 +106,7 @@ const Inbox = () => {
   return (
     <div>
       <Container
-        component="main"
+       component="main"
         maxWidth="md"
         sx={{
          minHeight: '80vh', 

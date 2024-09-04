@@ -8,8 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import theme from './Theme';
 import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/Layout';
-import Login from './pages/Login';
-import Register from './pages/Register';
 import Home from './pages/Home';
 import MyFlats from './pages/MyFlats';
 import NewFlat from './pages/NewFlat';
@@ -23,6 +21,7 @@ import Inbox from './pages/Inbox';
 import SendMessage from './pages/SendMessage'; 
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
+import AuthPage from './pages/AuthPage'; 
 import './firebase';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -37,8 +36,8 @@ root.render(
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<PrivateRoute><Home /></PrivateRoute>} />
-              <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-              <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+              <Route path="/login" element={<PublicRoute><AuthPage isRegister={false} /></PublicRoute>} />
+              <Route path="/register" element={<PublicRoute><AuthPage isRegister={true} /></PublicRoute>} />
               <Route path="/favorites" element={<PrivateRoute><Favorites /></PrivateRoute>} />
               <Route path="/my-flats" element={<PrivateRoute><MyFlats /></PrivateRoute>} />
               <Route path="/new-flat" element={<PrivateRoute><NewFlat /></PrivateRoute>} />

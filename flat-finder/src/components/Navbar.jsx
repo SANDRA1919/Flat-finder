@@ -130,12 +130,10 @@ const Navbar = () => {
 
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
           {user && (
-            <Button color="inherit" onClick={handleHomeClick}>
-              Home
-            </Button>
-          )}
-          {user ? (
             <>
+              <Button color="inherit" component={Link} to="/">
+                Home
+              </Button>
               <Button color="inherit" component={Link} to="/inbox">
                 <Badge badgeContent={unreadMessagesCount} color="error">
                   Inbox
@@ -157,15 +155,6 @@ const Navbar = () => {
               )}
               <Button color="inherit" onClick={handleDialogOpen}>
                 Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button color="inherit" component={Link} to="/login">
-                Login
-              </Button>
-              <Button color="inherit" component={Link} to="/register">
-                Register
               </Button>
             </>
           )}
@@ -207,14 +196,9 @@ const Navbar = () => {
                 </ListItem>
               </>
             ) : (
-              <>
-                <ListItem button component={Link} to="/login">
-                  <ListItemText primary="Login" />
-                </ListItem>
-                <ListItem button component={Link} to="/register">
-                  <ListItemText primary="Register" />
-                </ListItem>
-              </>
+              <ListItem button onClick={() => navigate('/login')}>
+                <ListItemText primary="Sign In / Register" />
+              </ListItem>
             )}
           </List>
           <Divider />
