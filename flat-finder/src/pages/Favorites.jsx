@@ -121,7 +121,7 @@ const Favorites = () => {
     }}
   >
     <Container component="main" maxWidth="lg">
-      <Paper elevation={3} sx={{ p: 3, mt: 3, border: '5px solid #4CAF50', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
+      <Paper elevation={3} sx={{ p: 3, mt: 3,width: '100%', overflow: 'hidden', border: '5px solid #4CAF50', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
         {isMobile ? (
           <>
             <FormControl fullWidth margin="normal">

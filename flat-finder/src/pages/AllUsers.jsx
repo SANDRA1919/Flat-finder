@@ -30,11 +30,11 @@ const AllUsers = () => {
             const apartmentCountSnapshot = await getCountFromServer(apartmentQuery);
             
             // Debugging: Afișează numărul de apartamente pentru fiecare utilizator
-            console.log(`Utilizator ${user.id} are ${apartmentCountSnapshot.count} apartamente`);
+            console.log(`Utilizator ${user.id} are ${apartmentCountSnapshot.data().count} apartamente`);
 
             return {
               ...user,
-              apartmentsAdded: apartmentCountSnapshot.count,
+              apartmentsAdded: apartmentCountSnapshot.data().count,
             };
           } catch (error) {
             console.error(`Eroare la obținerea apartamentelor pentru utilizatorul ${user.id}:`, error); // Debugging
@@ -44,6 +44,8 @@ const AllUsers = () => {
             };
           }
         }));
+
+        console.log('Users with apartment counts:', usersWithApartmentCounts); // Additional debugging log
 
         setUsers(usersWithApartmentCounts);
       } catch (error) {
