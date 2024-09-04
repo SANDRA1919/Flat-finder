@@ -130,19 +130,30 @@ const Inbox = () => {
           alignItems: 'center',
         }}
       >
-        <Paper elevation={3} sx={{ p: 3, border: '2px solid teal', borderRadius: '12px' }}>
+        <Paper elevation={3} sx={{ p: 3, border: '2px solid teal', borderRadius: '12px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
           <Typography variant="h4" gutterBottom align="center">Inbox</Typography>
           {messages.length > 0 ? (
             messages.map((message) => (
               <Paper key={message.id} sx={{ p: 2, mt: 2, border: '1px solid teal', borderRadius: '8px', backgroundColor: '#e0f7fa', display: 'flex', alignItems: 'center' }}>
                 <Box sx={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                   <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#00796b' }}>From: {message.senderEmail}</Typography>
-                  <Box display="flex" alignItems="center" mt={1}>
+                  <Box 
+                    sx={{ 
+                      display: 'flex', 
+                      flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on small screens, horizontally on larger screens
+                      mt: 1 
+                    }}
+                  >
                     <Button 
                       variant="outlined" 
                       color="primary" 
                       onClick={() => handleViewMessage(message)} 
-                      sx={{ mr: 1, backgroundColor: '#00796b', color: '#ffffff' }}
+                      sx={{ 
+                        mb: { xs: 1, sm: 0 }, 
+                        mr: { sm: 1 }, 
+                        backgroundColor: '#00796b', 
+                        color: '#ffffff' 
+                      }}
                     >
                       View
                     </Button>
@@ -151,7 +162,12 @@ const Inbox = () => {
                       color="error" 
                       startIcon={<DeleteIcon />} 
                       onClick={() => handleOpenDeleteDialog(message.id)}
-                      sx={{ backgroundColor: '#d32f2f', color: '#ffffff' }}
+                      sx={{ 
+                        mb: { xs: 1, sm: 0 }, 
+                        mr: { sm: 1 }, 
+                        backgroundColor: '#d32f2f', 
+                        color: '#ffffff' 
+                      }}
                     >
                       Delete
                     </Button>
@@ -160,7 +176,12 @@ const Inbox = () => {
                       color="info" 
                       startIcon={<ReplyIcon />} 
                       onClick={() => handleReplyMessage(message)}
-                      sx={{ backgroundColor: '#0288d1', color: '#ffffff', ml: 1 }}
+                      sx={{ 
+                        mb: { xs: 1, sm: 0 }, 
+                        mr: { sm: 1 },
+                        backgroundColor: '#0288d1', 
+                        color: '#ffffff' 
+                      }}
                     >
                       Reply
                     </Button>
