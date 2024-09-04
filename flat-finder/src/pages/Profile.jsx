@@ -47,6 +47,22 @@ const Profile = () => {
   };
 
   return (
+    <Box
+    sx={{
+      minHeight: '100vh',
+      width: '100vw', // Ensures full-width coverage
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundImage: 'url(/img/profile.jpg)', // Path to your background image
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'absolute', // Ensure the image covers the whole viewport
+      top: 60,
+      left: 0,
+    }}
+  >
     <Container component="main" maxWidth="sm">
       <Paper elevation={3} sx={{ p: 3, mt: 3, border: '2px solid #4CAF50', backgroundColor: '#F0FFF0' }}>
         <Typography variant="h4" gutterBottom>
@@ -103,6 +119,7 @@ const Profile = () => {
         </Dialog>
       </Paper>
     </Container>
+    </Box>
   );
 };
 

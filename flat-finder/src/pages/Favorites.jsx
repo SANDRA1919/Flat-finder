@@ -28,7 +28,8 @@ import {
   DialogActions,
   DialogContentText,
   DialogContent,
-  DialogTitle
+  DialogTitle,
+  Box
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
@@ -103,8 +104,24 @@ const Favorites = () => {
   });
 
   return (
+    <Box
+    sx={{
+      minHeight: '100vh',
+      width: '100vw', // Ensures full-width coverage
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundImage: 'url(/img/myflats.jpg)', // Path to your background image
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'absolute', // Ensure the image covers the whole viewport
+      top: 60,
+      left: 0,
+    }}
+  >
     <Container component="main" maxWidth="lg">
-      <Paper elevation={3} sx={{ p: 3, mt: 3, border: '2px solid #4CAF50', backgroundColor: '#F0FFF0' }}>
+      <Paper elevation={3} sx={{ p: 3, mt: 3, border: '5px solid #4CAF50', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
         {isMobile ? (
           <>
             <FormControl fullWidth margin="normal">
@@ -145,10 +162,10 @@ const Favorites = () => {
             </Grid>
           </>
         ) : (
-          <TableContainer>
-            <Table>
+          <TableContainer >
+            <Table >
               <TableHead>
-                <TableRow>
+                <TableRow >
                   <TableCell>
                     <TableSortLabel
                       active={sortConfig.key === 'city'}
@@ -219,7 +236,20 @@ const Favorites = () => {
               </TableHead>
               <TableBody>
                 {sortedFavorites.map((flat) => (
-                  <TableRow key={flat.id}>
+                  <TableRow key={flat.id}                 
+                  sx={{
+                    '&:nth-of-type(odd)': { backgroundColor: 'transparent' },
+                    '&:nth-of-type(even)': { backgroundColor: 'transparent' },
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      transition: 'background-color 0.3s ease', 
+                    },
+                      transition: 'transform 0.2s ease', 
+                      transform: 'scale(1)', 
+                      '&:hover': {
+                        transform: 'scale(1.02)', 
+                      },
+                  }}>
                     <TableCell><Typography>{flat.city}</Typography></TableCell>
                     <TableCell><Typography>{flat.streetName}</Typography></TableCell>
                     <TableCell><Typography>{flat.streetNumber}</Typography></TableCell>
@@ -261,6 +291,7 @@ const Favorites = () => {
         </DialogActions>
       </Dialog>
     </Container>
+    </Box>
   );
 };
 
