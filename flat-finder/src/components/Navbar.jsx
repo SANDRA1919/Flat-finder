@@ -25,6 +25,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PersonIcon from '@mui/icons-material/Person';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
+import { useTheme, useMediaQuery } from '@mui/material';
 
 const Navbar = () => {
   const { user, loading, logout } = useAuth();
@@ -33,6 +34,10 @@ const Navbar = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('lg')); // Custom breakpoint 1024px
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg')); // For mobile view
 
   useEffect(() => {
     const fetchUnreadMessages = async () => {
@@ -117,7 +122,43 @@ const Navbar = () => {
           )}
         </Box>
 
-        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {/* Desktop View */}
+        {isDesktop && (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {user && (
+              <>
+                <Button color="inherit" component={Link} to="/">
+                  Home
+                </Button>
+                <Button color="inherit" component={Link} to="/inbox">
+                  <Badge badgeContent={unreadMessagesCount} color="error">
+                    Inbox
+                  </Badge>
+                </Button>
+                <Button color="inherit" component={Link} to="/my-flats">
+                  My Flats
+                </Button>
+                <Button color="inherit" component={Link} to="/favorites">
+                  Favorites
+                </Button>
+                <Button color="inherit" component={Link} to="/profile">
+                  Profile
+                </Button>
+                {user.isAdmin && (
+                  <Button color="inherit" component={Link} to="/all-users">
+                    All users
+                  </Button>
+                )}
+                <Button color="inherit" onClick={handleDialogOpen}>
+                  Logout
+                </Button>
+              </>
+            )}
+          </Box>
+        )}
+
+        {/* Mobile View */}
+        {isMobile && (
           <IconButton
             edge="start"
             color="inherit"
@@ -126,39 +167,7 @@ const Navbar = () => {
           >
             <MenuIcon />
           </IconButton>
-        </Box>
-
-        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-          {user && (
-            <>
-              <Button color="inherit" component={Link} to="/">
-                Home
-              </Button>
-              <Button color="inherit" component={Link} to="/inbox">
-                <Badge badgeContent={unreadMessagesCount} color="error">
-                  Inbox
-                </Badge>
-              </Button>
-              <Button color="inherit" component={Link} to="/my-flats">
-                My Flats
-              </Button>
-              <Button color="inherit" component={Link} to="/favorites">
-                Favorites
-              </Button>
-              <Button color="inherit" component={Link} to="/profile">
-                Profile
-              </Button>
-              {user.isAdmin && (
-                <Button color="inherit" component={Link} to="/all-users">
-                  All users
-                </Button>
-              )}
-              <Button color="inherit" onClick={handleDialogOpen}>
-                Logout
-              </Button>
-            </>
-          )}
-        </Box>
+        )}
       </Toolbar>
 
       <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>

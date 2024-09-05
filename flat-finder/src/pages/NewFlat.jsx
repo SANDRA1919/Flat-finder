@@ -81,8 +81,24 @@ const handleSave = async () => {
 };
 
   return (
-    <Container maxWidth="md">
-      <Paper elevation={3} sx={{ padding: 4, marginTop: 4 }}>
+    <Box
+    sx={{
+      minHeight: '100vh',
+      width: '100vw',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundImage: 'url(/img/favorites.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'absolute',
+      top: 60,
+      left: 0,
+    }}
+  >
+    <Container maxWidth="md" >
+      <Paper elevation={3} sx={{ padding: 4, marginTop: 4, backgroundColor: 'transparent', backdropFilter: "blur(10px)" }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Add New Flat
         </Typography>
@@ -202,6 +218,7 @@ const handleSave = async () => {
         </DialogActions>
       </Dialog>
     </Container>
+    </Box>
   );
 };
 

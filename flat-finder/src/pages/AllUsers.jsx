@@ -85,7 +85,24 @@ const AllUsers = () => {
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
+    <Box
+    sx={{
+      minHeight: '100vh',
+      width: '100vw',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundImage: 'url(/img/allusers.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'absolute',
+      top: 60,
+      left: 0,
+    }}
+  >
+    <Box  sx={{ backgroundColor: 'transparent',
+          backdropFilter: "blur(10px)"}}>
       <Typography
         variant="h4"
         gutterBottom
@@ -99,109 +116,117 @@ const AllUsers = () => {
       </Typography>
       
       {/* Render table for larger screens and cards for smaller screens */}
-      {!(isMobile || isTablet) ? (
-        <Paper sx={{ width: '100%', overflow: 'hidden', boxShadow: 6 }}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: teal[700], color: 'white' }}>
-                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center', color: green[100] }}>Name</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center', color: green[100] }}>Email</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center', color: green[100] }}>Apartments Added</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', textAlign: 'center', color: green[100] }}>Manage</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {users.map(user => (
-                <TableRow
-                  key={user.id}
-                  sx={{
-                    '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' },
-                    '&:nth-of-type(even)': { backgroundColor: '#ffffff' },
-                    '&:hover': {
-                      backgroundColor: '#e0e0e0',
-                      transition: 'background-color 0.3s ease',
-                    },
-                    transition: 'transform 0.2s ease',
-                    transform: 'scale(1)',
-                    '&:hover': {
-                      transform: 'scale(1.02)',
-                    },
-                  }}
-                >
-                  <TableCell
-                    align="center"
+      {!(isMobile || isTablet)? (
+  <Paper maxWidth='xl' sx={{ overflow: 'hidden', boxShadow: 6, backgroundColor: 'transparent', backdropFilter: "blur(10px)", width: '100%', maxWidth: '100vw' }}>
+    <Table sx={{ minWidth: '80vw', maxWidth: '100vw', fontSize: '1rem' }}>
+      <TableHead sx={{ backgroundColor: teal[700], color: 'white', height: '60px' }}>
+        <TableRow sx={{ backgroundColor: teal[700], color: 'white', height: '60px' }}>
+          <TableCell sx={{ fontWeight: 'bold', textAlign: 'center', color: green[100] }}>Name</TableCell>
+          <TableCell sx={{ fontWeight: 'bold', textAlign: 'center', color: green[100] }}>Email</TableCell>
+          <TableCell sx={{ fontWeight: 'bold', textAlign: 'center', color: green[100] }}>Apartments Added</TableCell>
+          <TableCell sx={{ fontWeight: 'bold', textAlign: 'center', color: green[100] }}>Manage</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {users.map(user => (
+          <TableRow
+            key={user.id}
+            sx={{ backgroundColor: 'transparent', backdropFilter: "blur(10px)",
+              '&:nth-of-type(odd)': { backgroundColor: 'transparent' },
+              '&:nth-of-type(even)': { backgroundColor: 'transparent' },
+              '&:hover': {
+                backgroundColor: '#e0e0e0',
+                transition: 'background-color 0.3s ease',
+              },
+              transition: 'transform 0.2s ease',
+              transform:'scale(1)',
+              '&:hover': {
+                transform:'scale(1.02)',
+              },
+              height: '60px'
+            }}
+          >
+            <TableCell
+              align="center"
+              sx={{
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                color: green[800],
+                padding: '10px',
+                verticalAlign: 'middle'
+              }}
+            >
+              {`${user.firstName} ${user.lastName}`}
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                color: green[800],
+                padding: '10px',
+                verticalAlign: 'middle'
+              }}
+            >
+              {user.email}
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                color: green[800],
+                padding: '10px',
+                verticalAlign: 'middle'
+              }}
+            >
+              {user.apartmentsAdded || 0}
+            </TableCell>
+            <TableCell align="center">
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                {!user.isAdmin && (
+                  <Tooltip title="Grant Admin Rights">
+                    <IconButton
+                      onClick={() => handleOpenDialog(user, 'grantAdmin')}
+                      color="success"
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: green[100],
+                          transition: 'background-color 0.3s ease',
+                        },
+                      }}
+                    >
+                      <AdminIcon />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                <Tooltip title="Remove User">
+                  <IconButton
+                    onClick={() => handleOpenDialog(user,'removeUser')}
+                    color="error"
                     sx={{
-                      fontSize: '1.2rem',
-                      fontWeight: 'bold',
-                      color: green[800],
+                      '&:hover': {
+                        backgroundColor: '#ffdddd',
+                        transition: 'background-color 0.3s ease',
+                      },
                     }}
                   >
-                    {`${user.firstName} ${user.lastName}`}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      fontSize: '1.2rem',
-                      fontWeight: 'bold',
-                      color: green[800],
-                    }}
-                  >
-                    {user.email}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      fontSize: '1.2rem',
-                      fontWeight: 'bold',
-                      color: green[800],
-                    }}
-                  >
-                    {user.apartmentsAdded || 0}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
-                      {!user.isAdmin && (
-                        <Tooltip title="Grant Admin Rights">
-                          <IconButton
-                            onClick={() => handleOpenDialog(user, 'grantAdmin')}
-                            color="success"
-                            sx={{
-                              '&:hover': {
-                                backgroundColor: green[100],
-                                transition: 'background-color 0.3s ease',
-                              },
-                            }}
-                          >
-                            <AdminIcon />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                      <Tooltip title="Remove User">
-                        <IconButton
-                          onClick={() => handleOpenDialog(user, 'removeUser')}
-                          color="error"
-                          sx={{
-                            '&:hover': {
-                              backgroundColor: '#ffdddd',
-                              transition: 'background-color 0.3s ease',
-                            },
-                          }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      ) : (
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </Paper>
+): (
         <Grid container spacing={2}>
           {users.map(user => (
             <Grid item xs={12} sm={6} md={4} key={user.id}>
-              <Card sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 2, boxShadow: 3 }}>
+              <Card sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 2, boxShadow: 3,  backgroundColor: 'transparent',
+          backdropFilter: "blur(10px)" }}>
                 <CardContent>
                   <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
                     {`${user.firstName} ${user.lastName}`}
@@ -276,6 +301,7 @@ const AllUsers = () => {
           </Button>
         </DialogActions>
       </Dialog>
+    </Box>
     </Box>
   );
 };

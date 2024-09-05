@@ -121,7 +121,7 @@ const Favorites = () => {
     }}
   >
     <Container component="main" maxWidth="xl">
-      <Paper  sx={{ p: 3, width: '100%',  backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
+      <Paper maxWidth = 'xl'  sx={{ width: '100%',  backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
         {isMobile ? (
           <>
             <FormControl  margin="normal">

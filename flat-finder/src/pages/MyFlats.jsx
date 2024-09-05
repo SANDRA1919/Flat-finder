@@ -61,7 +61,7 @@ const MyFlats = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundImage: 'url(/img/myflats.jpg)', // Path to your background image
+      backgroundImage: 'url(/img/favorites.jpg)', // Path to your background image
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',

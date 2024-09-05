@@ -138,15 +138,16 @@ const Inbox = () => {
     >
       <Container
         component="main"
-        maxWidth="md"
+        maxWidth="md" // Increased size here
         sx={{
-          minHeight: '80vh',
+          minHeight: '90vh', // Adjusted height
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          padding: '10px', // Extra padding for the container
         }}
       >
-        <Paper elevation={3} sx={{ p: 3, border: '2px solid teal', borderRadius: '12px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)' }}>
+        <Paper elevation={3}  sx={{ p: 3, borderRadius: '12px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', width: '100%' }}>
           <Typography variant="h4" gutterBottom align="center" sx={{ color: 'teal' }}>Messages</Typography>
           <Tabs
             value={tabValue}
@@ -156,7 +157,7 @@ const Inbox = () => {
             variant="fullWidth"
             sx={{ mb: 2 }}
           >
-            <Tab label="Inbox" />
+            <Tab label="Received" />
             <Tab label="Sent" />
           </Tabs>
 
@@ -173,7 +174,7 @@ const Inbox = () => {
                       borderRadius: '8px',
                       backgroundColor: message.isRead ? '#e0f7fa' : '#b2dfdb',
                       display: 'flex',
-                      alignItems: 'center'
+                      alignItems: 'center',
                     }}
                   >
                     <Box sx={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -183,13 +184,13 @@ const Inbox = () => {
                         <Typography variant="body2" sx={{ color: '#004d40', textAlign: 'left' }}>{message.message}</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', mt: 1 }}>
-                        <Button variant="outlined" color="primary" onClick={() => handleViewMessage(message)} sx={{ mr: 1 }}>
+                        <Button variant="outlined" color="primary" onClick={() => handleViewMessage(message)} sx={{ mr: 2 }}>
                           View
                         </Button>
-                        <Button variant="contained" color="error" startIcon={<DeleteIcon />} onClick={() => handleOpenDeleteDialog(message.id)}>
+                        <Button variant="contained" color="error" startIcon={<DeleteIcon />} onClick={() => handleOpenDeleteDialog(message.id)} sx={{ mr: 2 }}>
                           Delete
                         </Button>
-                        <Button variant="outlined" color="info" startIcon={<ReplyIcon />} onClick={() => handleReplyMessage(message)}>
+                        <Button variant="outlined" color="info" startIcon={<ReplyIcon />} onClick={() => handleReplyMessage(message)} sx={{ mr: 2 }}>
                           Reply
                         </Button>
                       </Box>
@@ -207,7 +208,6 @@ const Inbox = () => {
               {sentMessages.length > 0 ? (
                 sentMessages.map((message) => (
                   <Paper
-                    maxWidth="md"
                     key={message.id}
                     sx={{
                       p: 2,
@@ -216,7 +216,7 @@ const Inbox = () => {
                       borderRadius: '8px',
                       backgroundColor: '#e0f7fa',
                       display: 'flex',
-                      alignItems: 'center'
+                      alignItems: 'center',
                     }}
                   >
                     <Box sx={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -226,10 +226,10 @@ const Inbox = () => {
                         <Typography variant="body2" sx={{ color: '#004d40', textAlign: 'left' }}>{message.message}</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', mt: 1 }}>
-                        <Button variant="outlined" color="primary" onClick={() => handleViewMessage(message)} sx={{ mr: 1 }}>
+                        <Button variant="outlined" color="primary" onClick={() => handleViewMessage(message)} sx={{ mr: 2 }}>
                           View
                         </Button>
-                        <Button variant="contained" color="error" startIcon={<DeleteIcon />} onClick={() => handleOpenDeleteDialog(message.id)}>
+                        <Button variant="contained" color="error" startIcon={<DeleteIcon />} onClick={() => handleOpenDeleteDialog(message.id)} sx={{ mr: 2 }}>
                           Delete
                         </Button>
                       </Box>

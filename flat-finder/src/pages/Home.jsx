@@ -18,15 +18,21 @@ import {
   Box,
   useMediaQuery,
   useTheme,
-  Dialog, 
+  Dialog,
   DialogActions,
-  DialogContentText, 
+  DialogContentText,
   DialogContent,
   DialogTitle,
-  TextField, // Import TextField for search bar
+  TextField,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Select,
+  MenuItem,
 } from '@mui/material';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';  
-import { MdDelete } from 'react-icons/md';              
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { MdDelete } from 'react-icons/md';
 import SendIcon from '@mui/icons-material/Send';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -38,10 +44,11 @@ const Home = () => {
   const [sortOrder, setSortOrder] = useState('asc');
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedFlatId, setSelectedFlatId] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOption, setSortOption] = useState('');
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMediumScreen = useMediaQuery('(max-width: 1024px)');
+  const isMediumScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     const fetchFlats = async () => {
@@ -107,7 +114,7 @@ const Home = () => {
     const isAsc = sortType === type && sortOrder === 'asc';
     setSortOrder(isAsc ? 'desc' : 'asc');
     setSortType(type);
-  
+
     let sortedFlats = [...flats];
     if (type === 'rentPrice') {
       sortedFlats.sort((a, b) => isAsc ? b.rentPrice - a.rentPrice : a.rentPrice - b.rentPrice);
@@ -121,10 +128,8 @@ const Home = () => {
       sortedFlats.sort((a, b) => isAsc ? b.yearBuilt - a.yearBuilt : a.yearBuilt - b.yearBuilt);
     } else if (type === 'availableDate') {
       sortedFlats.sort((a, b) => {
-        // Ensure that `availableDate` is converted to a valid date
         const dateA = new Date(a.availableDate);
         const dateB = new Date(b.availableDate);
-        // Check if the dates are valid
         if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
           console.error('Invalid date:', a.availableDate, b.availableDate);
         }
@@ -139,11 +144,42 @@ const Home = () => {
     }
     setFlats(sortedFlats);
   };
-  
-  
 
-  // Filter flats based on search query
-  const filteredFlats = flats.filter(flat => 
+  const handleSortChange = (event) => {
+    setSortOption(event.target.value);
+  };
+
+  useEffect(() => {
+    const sortedFlats = [...flats];
+    if (sortOption === 'priceAsc') {
+      sortedFlats.sort((a, b) => a.rentPrice - b.rentPrice);
+    } else if (sortOption === 'priceDesc') {
+      sortedFlats.sort((a, b) => b.rentPrice - a.rentPrice);
+    } else if (sortOption === 'areaAsc') {
+      sortedFlats.sort((a, b) => a.areaSize - b.areaSize);
+    } else if (sortOption === 'areaDesc') {
+      sortedFlats.sort((a, b) => b.areaSize - a.areaSize);
+    } else if (sortOption === 'dateAsc') {
+      sortedFlats.sort((a, b) => new Date(a.dateAvailable) - new Date(b.dateAvailable));
+    } else if (sortOption === 'dateDesc') {
+      sortedFlats.sort((a, b) => new Date(b.dateAvailable) - new Date(a.dateAvailable));
+    }  else if (sortOption === 'cityAtoZ') {
+      sortedFlats.sort((a, b) => {
+        const cityA = a.city.toLowerCase();
+        const cityB = b.city.toLowerCase();
+        return cityA.localeCompare(cityB);
+      });
+    } else if (sortOption === 'cityZtoA') {
+      sortedFlats.sort((a, b) => {
+        const cityA = a.city.toLowerCase();
+        const cityB = b.city.toLowerCase();
+        return cityB.localeCompare(cityA);
+      });
+    }
+    setFlats(sortedFlats);
+  }, [sortOption]);
+
+  const filteredFlats = flats.filter(flat =>
     (flat.city ? flat.city.toLowerCase().includes(searchQuery.toLowerCase()) : '') ||
     (flat.streetName ? flat.streetName.toLowerCase().includes(searchQuery.toLowerCase()) : '') ||
     (flat.streetNumber ? flat.streetNumber.toString().toLowerCase().includes(searchQuery.toLowerCase()) : '') ||
@@ -152,7 +188,6 @@ const Home = () => {
     (flat.yearBuilt ? flat.yearBuilt.toString().toLowerCase().includes(searchQuery.toLowerCase()) : '') ||
     (flat.dateAvailable ? flat.dateAvailable.toLowerCase().includes(searchQuery.toLowerCase()) : '')
   );
-  
 
   return (
     <Box
@@ -162,7 +197,7 @@ const Home = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: 'url(/img/home2.jpg)', 
+        backgroundImage: 'url(/img/home.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -181,137 +216,196 @@ const Home = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Paper elevation={3} sx={{ borderRadius: '8px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)'}}>
-          <TableContainer component={Paper} sx={{ p: 3, borderRadius: '4px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)'}}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <TableSortLabel
-                      active={sortType === 'city'}
-                      direction={sortOrder}
-                      onClick={() => handleSort('city')}
-                    >
-                      City
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={sortType === 'streetName'}
-                      direction={sortOrder}
-                      onClick={() => handleSort('streetName')}
-                    >
-                      Street Name
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                  <TableSortLabel
-                      active={sortType === 'streetNumber'}
-                      direction={sortOrder}
-                      onClick={() => handleSort('streetNumber')}
-                    >
-                      Street Number
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={sortType === 'rentPrice'}
-                      direction={sortOrder}
-                      onClick={() => handleSort('rentPrice')}
-                    >
-                      Price
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={sortType === 'areaSize'}
-                      direction={sortOrder}
-                      onClick={() => handleSort('areaSize')}
-                    >
-                      Area
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                  <TableSortLabel
-                      active={sortType === 'yearBuilt'}
-                      direction={sortOrder}
-                      onClick={() => handleSort('yearBuilt')}
-                    >
-                      Year Built
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                  <TableSortLabel
-                      active={sortType === 'availableDate'}
-                      direction={sortOrder}
-                      onClick={() => handleSort('availableDate')}
-                    >
-                      Available Date
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                  <TableSortLabel
-                      active={sortType === 'hasAC'}
-                      direction={sortOrder}
-                      onClick={() => handleSort('hasAC')}
-                    >
-                      Has AC
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>Fav/Unfav</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredFlats.map((flat) => (
-                  <TableRow key={flat.id}
-                  sx={{
-                    '&:nth-of-type(odd)': { backgroundColor: 'transparent' },
-                    '&:nth-of-type(even)': { backgroundColor: 'transparent' },
-                    '&:hover': {
-                      backgroundColor: 'transparent',
-                      transition: 'background-color 0.3s ease', 
-                    },
-                      transition: 'transform 0.2s ease', 
-                      transform: 'scale(1)', 
-                      '&:hover': {
-                        transform: 'scale(1.02)', 
-                      },
-                  }}>
-                    <TableCell>{flat.city}</TableCell>
-                    <TableCell>{flat.streetName}</TableCell>
-                    <TableCell>{flat.streetNumber}</TableCell>
-                    <TableCell>{flat.rentPrice}</TableCell>
-                    <TableCell>{flat.areaSize}</TableCell>
-                    <TableCell>{flat.yearBuilt}</TableCell>
-                    <TableCell>{flat.dateAvailable}</TableCell>
-                    <TableCell>{flat.hasAC ? 'Yes' : 'No'}</TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleToggleFavorite(flat.id)}>
-                        {flat.favorites && flat.favorites.includes(user.uid) ? <FaHeart /> : <FaRegHeart />}
-                      </IconButton>
-                      {flat.ownerId === user.uid && (
-                        <IconButton onClick={() => handleDelete(flat.id)}>
-                          <MdDelete />
-                        </IconButton>
-                      )}
-                      {flat.ownerId !== user.uid && (
-                        <Button
-                          onClick={() => handleSendMessage(flat.id)}
-                          startIcon={<SendIcon />}
-                          variant="contained"
-                          color="primary"
-                        >
-                          Send Message
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
+        
+        {isMediumScreen && (
+          <Select
+            fullWidth
+            value={sortOption}
+            onChange={handleSortChange}
+            sx={{ mb: 2 }}
+          >
+            <MenuItem value="">No Sorting</MenuItem>
+            <MenuItem value="priceAsc">Price: Low to High</MenuItem>
+            <MenuItem value="priceDesc">Price: High to Low</MenuItem>
+            <MenuItem value="areaAsc">Area: Small to Large</MenuItem>
+            <MenuItem value="areaDesc">Area: Large to Small</MenuItem>
+            <MenuItem value="dateAsc">Date Available: Earliest First</MenuItem>
+            <MenuItem value="dateDesc">Date Available: Latest First</MenuItem>
+            <MenuItem value="cityAtoZ">City  (A-Z)</MenuItem>
+            <MenuItem value="cityZtoA">City  (Z-A)</MenuItem>
+          </Select>
+        )}
 
+        {isMediumScreen ? (
+          <Grid container spacing={2}>
+            {filteredFlats.map(flat => (
+              <Grid item xs={12} sm={6} md={4} key={flat.id}>
+                <Card sx={{ backgroundColor: 'transparent', backdropFilter: 'blur(10px)' }}>
+                  <CardContent>
+                    <Typography variant="h6">{flat.city}</Typography>
+                    <Typography color="textSecondary">{flat.streetName} {flat.streetNumber}</Typography>
+                    <Typography variant="body2">Price: ${flat.rentPrice}</Typography>
+                    <Typography variant="body2">Area: {flat.areaSize} sq. ft.</Typography>
+                    <Typography variant="body2">Year Built: {flat.yearBuilt}</Typography>
+                    <Typography variant="body2">Available Date: {flat.dateAvailable}</Typography>
+                    <Typography variant="body2">Has AC: {flat.hasAC ? 'Yes' : 'No'}</Typography>
+                  </CardContent>
+                  <CardActions>
+                    <IconButton onClick={() => handleToggleFavorite(flat.id)}>
+                      {flat.favorites && flat.favorites.includes(user.uid) ? <FaHeart /> : <FaRegHeart />}
+                    </IconButton>
+                    {flat.ownerId === user.uid ? (
+                      <IconButton onClick={() => handleDelete(flat.id)}>
+                        <MdDelete />
+                      </IconButton>
+                    ) : (
+                      <Button
+                        onClick={() => handleSendMessage(flat.id)}
+                        startIcon={<SendIcon />}
+                        variant="contained"
+                        color="primary"
+                      >
+                        Send Message
+                      </Button>
+                    )}
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Paper elevation={3} sx={{ borderRadius: '8px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', mb: 3, mt: 2 }}>
+            <TableContainer component={Paper} sx={{ p: 3, borderRadius: '4px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)' }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortType === 'city'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('city')}
+                      >
+                        City
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortType === 'streetName'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('streetName')}
+                      >
+                        Street Name
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortType === 'streetNumber'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('streetNumber')}
+                      >
+                        Street Number
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortType === 'rentPrice'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('rentPrice')}
+                      >
+                        Price
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortType === 'areaSize'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('areaSize')}
+                      >
+                        Area
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortType === 'yearBuilt'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('yearBuilt')}
+                      >
+                        Year Built
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortType === 'availableDate'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('availableDate')}
+                      >
+                        Available Date
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>
+                      <TableSortLabel
+                        active={sortType === 'hasAC'}
+                        direction={sortOrder}
+                        onClick={() => handleSort('hasAC')}
+                      >
+                        Has AC
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredFlats.map(flat => (
+                    <TableRow
+                      key={flat.id}
+                      sx={{
+                        '&:nth-of-type(odd)': { backgroundColor: 'transparent' },
+                        '&:nth-of-type(even)': { backgroundColor: 'transparent' },
+                        '&:hover': {
+                          backgroundColor: 'transparent',
+                          transition: 'background-color 0.3s ease',
+                        },
+                        transition: 'transform 0.2s ease',
+                        transform: 'scale(1)',
+                        '&:hover': {
+                          transform: 'scale(1.02)',
+                        },
+                      }}
+                    >
+                      <TableCell>{flat.city}</TableCell>
+                      <TableCell>{flat.streetName}</TableCell>
+                      <TableCell>{flat.streetNumber}</TableCell>
+                      <TableCell>{flat.rentPrice}</TableCell>
+                      <TableCell>{flat.areaSize}</TableCell>
+                      <TableCell>{flat.yearBuilt}</TableCell>
+                      <TableCell>{flat.dateAvailable}</TableCell>
+                      <TableCell>{flat.hasAC ? 'Yes' : 'No'}</TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => handleToggleFavorite(flat.id)}>
+                          {flat.favorites && flat.favorites.includes(user.uid) ? <FaHeart /> : <FaRegHeart />}
+                        </IconButton>
+                        {flat.ownerId === user.uid ? (
+                          <IconButton onClick={() => handleDelete(flat.id)}>
+                            <MdDelete />
+                          </IconButton>
+                        ) : (
+                          <Button
+                            onClick={() => handleSendMessage(flat.id)}
+                            startIcon={<SendIcon />}
+                            variant="contained"
+                            color="primary"
+                          >
+                            Send Message
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        )}
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
           <DialogTitle>Confirm Delete</DialogTitle>
           <DialogContent>
