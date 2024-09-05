@@ -111,7 +111,7 @@ const Favorites = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundImage: 'url(/img/myflats.jpg)', // Path to your background image
+      backgroundImage: 'url(/img/myflats.jpg)', 
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -120,11 +120,11 @@ const Favorites = () => {
       left: 0,
     }}
   >
-    <Container component="main" maxWidth="lg">
-      <Paper elevation={3} sx={{ p: 3, mt: 3,width: '100%', overflow: 'hidden', border: '5px solid #4CAF50', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
+    <Container component="main" maxWidth="xl">
+      <Paper elevation={3} sx={{ p: 3, mt: 3,width: '100%', overflow: 'hidden',  backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
         {isMobile ? (
           <>
-            <FormControl fullWidth margin="normal">
+            <FormControl  margin="normal">
               <InputLabel>Sort By</InputLabel>
               <Select
                 value={sortConfig.key}

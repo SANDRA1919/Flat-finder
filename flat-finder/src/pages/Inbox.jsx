@@ -105,6 +105,7 @@ const Inbox = () => {
         recipientId: selectedMessage.senderId,
         senderId: user.uid,
         senderEmail: user.email,
+        recipientEmail: selectedMessage.senderEmail, 
         message: replyMessage,
         timestamp: timestamp.toISOString(),
         isRead: false
@@ -163,7 +164,18 @@ const Inbox = () => {
             <>
               {messages.length > 0 ? (
                 messages.map((message) => (
-                  <Paper key={message.id} sx={{ p: 2, mt: 2, border: '1px solid teal', borderRadius: '8px', backgroundColor: '#e0f7fa', display: 'flex', alignItems: 'center' }}>
+                  <Paper
+                    key={message.id}
+                    sx={{
+                      p: 2,
+                      mt: 2,
+                      border: '1px solid teal',
+                      borderRadius: '8px',
+                      backgroundColor: message.isRead ? '#e0f7fa' : '#b2dfdb',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                  >
                     <Box sx={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#00796b' }}>From: {message.senderEmail}</Typography>
                       <Box sx={{ display: 'flex', flexDirection: 'column', mt: 1 }}>
@@ -194,7 +206,18 @@ const Inbox = () => {
             <>
               {sentMessages.length > 0 ? (
                 sentMessages.map((message) => (
-                  <Paper key={message.id} sx={{ p: 2, mt: 2, border: '1px solid teal', borderRadius: '8px', backgroundColor: '#e0f7fa', display: 'flex', alignItems: 'center' }}>
+                  <Paper
+                    key={message.id}
+                    sx={{
+                      p: 2,
+                      mt: 2,
+                      border: '1px solid teal',
+                      borderRadius: '8px',
+                      backgroundColor: '#e0f7fa',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                  >
                     <Box sx={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                       <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#00796b' }}>To: {message.recipientEmail}</Typography>
                       <Box sx={{ display: 'flex', flexDirection: 'column', mt: 1 }}>
