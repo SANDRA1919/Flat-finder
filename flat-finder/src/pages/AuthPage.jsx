@@ -98,7 +98,7 @@ const AuthPage = () => {
     sx={{
       display: 'flex',
       width: '120vh',
-      maxWidth: '100%', // Ensure it doesn't overflow
+      maxWidth: '200%', // Ensure it doesn't overflow
       height: 'auto',
       borderRadius: 3,
       overflow: 'hidden', 

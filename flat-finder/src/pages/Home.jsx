@@ -14,11 +14,7 @@ import {
   Button,
   IconButton,
   Typography,
-  TextField,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
+  TableSortLabel,
   Box,
   useMediaQuery,
   useTheme,
@@ -27,9 +23,10 @@ import {
   DialogContentText, 
   DialogContent,
   DialogTitle,
+  TextField, // Import TextField for search bar
 } from '@mui/material';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';  // Iconițe pentru inimă
-import { MdDelete } from 'react-icons/md';              // Iconiță pentru coșul de gunoi
+import { FaHeart, FaRegHeart } from 'react-icons/fa';  
+import { MdDelete } from 'react-icons/md';              
 import SendIcon from '@mui/icons-material/Send';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -37,14 +34,13 @@ import { useNavigate } from 'react-router-dom';
 const Home = () => {
   const { user } = useAuth();
   const [flats, setFlats] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
   const [sortType, setSortType] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedFlatId, setSelectedFlatId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const navigate = useNavigate();
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMediumScreen = useMediaQuery('(max-width: 1024px)');
 
   useEffect(() => {
@@ -70,7 +66,7 @@ const Home = () => {
     setSelectedFlatId(flatId);
     setOpenDialog(true);
   };
-  
+
   const confirmDelete = async () => {
     try {
       await deleteDoc(doc(db, 'flats', selectedFlatId));
@@ -107,153 +103,172 @@ const Home = () => {
     navigate(`/send-message/${flatId}`);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
   const handleSort = (type) => {
     const isAsc = sortType === type && sortOrder === 'asc';
     setSortOrder(isAsc ? 'desc' : 'asc');
     setSortType(type);
-
+  
     let sortedFlats = [...flats];
-    if (type === 'price') {
+    if (type === 'rentPrice') {
       sortedFlats.sort((a, b) => isAsc ? b.rentPrice - a.rentPrice : a.rentPrice - b.rentPrice);
-    } else if (type === 'area') {
+    } else if (type === 'areaSize') {
       sortedFlats.sort((a, b) => isAsc ? b.areaSize - a.areaSize : a.areaSize - b.areaSize);
     } else if (type === 'city') {
       sortedFlats.sort((a, b) => isAsc ? b.city.localeCompare(a.city) : a.city.localeCompare(b.city));
+    } else if (type === 'streetNumber') {
+      sortedFlats.sort((a, b) => isAsc ? b.streetNumber - a.streetNumber : a.streetNumber - b.streetNumber);
+    } else if (type === 'yearBuilt') {
+      sortedFlats.sort((a, b) => isAsc ? b.yearBuilt - a.yearBuilt : a.yearBuilt - b.yearBuilt);
+    } else if (type === 'availableDate') {
+      sortedFlats.sort((a, b) => {
+        // Ensure that `availableDate` is converted to a valid date
+        const dateA = new Date(a.availableDate);
+        const dateB = new Date(b.availableDate);
+        // Check if the dates are valid
+        if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
+          console.error('Invalid date:', a.availableDate, b.availableDate);
+        }
+        return isAsc ? dateA - dateB : dateB - dateA;
+      });
+    } else if (type === 'hasAC') {
+      sortedFlats.sort((a, b) => {
+        const hasAC_A = a.hasAC ? 1 : 0;
+        const hasAC_B = b.hasAC ? 1 : 0;
+        return isAsc ? hasAC_A - hasAC_B : hasAC_B - hasAC_A;
+      });
     }
     setFlats(sortedFlats);
   };
+  
+  
 
-  const filteredFlats = flats.filter(flat =>
-    flat.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    flat.streetName.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter flats based on search query
+  const filteredFlats = flats.filter(flat => 
+    (flat.city ? flat.city.toLowerCase().includes(searchQuery.toLowerCase()) : '') ||
+    (flat.streetName ? flat.streetName.toLowerCase().includes(searchQuery.toLowerCase()) : '') ||
+    (flat.streetNumber ? flat.streetNumber.toString().toLowerCase().includes(searchQuery.toLowerCase()) : '') ||
+    (flat.rentPrice ? flat.rentPrice.toString().toLowerCase().includes(searchQuery.toLowerCase()) : '') ||
+    (flat.areaSize ? flat.areaSize.toString().toLowerCase().includes(searchQuery.toLowerCase()) : '') ||
+    (flat.yearBuilt ? flat.yearBuilt.toString().toLowerCase().includes(searchQuery.toLowerCase()) : '') ||
+    (flat.dateAvailable ? flat.dateAvailable.toLowerCase().includes(searchQuery.toLowerCase()) : '')
   );
+  
 
   return (
-<Box
-  sx={{
-    minHeight: '100vh',
-    width: '100vw', // Ensures full-width coverage
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundImage: 'url(/img/home2.jpg)', // Path to your background image
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    position: 'absolute', // Ensure the image covers the whole viewport
-    top: 60,
-    left: 0,
-  }}
->
-    <Container component="main" maxWidth="xl">
-      <Typography variant="h4" gutterBottom sx={{ mt: 3 }}>Available Flats</Typography>
-
-      <Grid container spacing={isSmallScreen ? 2 : 3} alignItems="center" sx={{ mb: 2 }}>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Search"
-            variant="outlined"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12} sm={8}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
-              <Button
-                onClick={() => handleSort('price')}
-                variant="contained"
-                fullWidth
-              >
-                Sort by Price ({sortOrder === 'asc' && sortType === 'price' ? '↑' : '↓'})
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Button
-                onClick={() => handleSort('area')}
-                variant="contained"
-                fullWidth
-              >
-                Sort by Area ({sortOrder === 'asc' && sortType === 'area' ? '↑' : '↓'})
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Button
-                onClick={() => handleSort('city')}
-                variant="contained"
-                fullWidth
-              >
-                Sort by City ({sortOrder === 'asc' && sortType === 'city' ? '↑' : '↓'})
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      {isMediumScreen ? (
-        <Grid container spacing={2}>
-          {filteredFlats.map(flat => (
-            <Grid item xs={12} key={flat.id}>
-              <Card sx={{ mb: 2, backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>City: {flat.city}</Typography>
-                  <Typography variant="subtitle1" gutterBottom>Street Name: {flat.streetName}</Typography>
-                  <Typography variant="subtitle1" gutterBottom>Street Number: {flat.streetNumber}</Typography>
-                  <Typography variant="body1">Price: {flat.rentPrice}</Typography>
-                  <Typography variant="body1">Area: {flat.areaSize}</Typography>
-                  <Typography variant="body1">Year Built: {flat.yearBuilt}</Typography>
-                  <Typography variant="body1">Available Date: {flat.dateAvailable}</Typography>
-                  <Typography variant="body1">Has AC: {flat.hasAC ? 'Yes' : 'No'}</Typography>
-                </CardContent>
-                <CardActions>
-                  <IconButton onClick={() => handleToggleFavorite(flat.id)}>
-                    {flat.favorites && flat.favorites.includes(user.uid) ? <FaHeart /> : <FaRegHeart />}
-                  </IconButton>
-                  {flat.ownerId === user.uid && (
-                    <IconButton onClick={() => handleDelete(flat.id)}>
-                      <MdDelete />
-                    </IconButton>
-                  )}
-                  {flat.ownerId !== user.uid && (
-                    <Button onClick={() => handleSendMessage(flat.id)} startIcon={<SendIcon />} variant="contained" color="primary">
-                      Send Message
-                    </Button>
-                  )}
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      ) : (
-        <Paper elevation={3} sx={{ p: 3, mt: 3, border: '2px solid green', borderRadius: '8px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
-          <TableContainer component={Paper} sx={{ border: '1px solid green', borderRadius: '4px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
-            <Table >
+    <Box
+      sx={{
+        minHeight: '100vh',
+        width: '100vw',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: 'url(/img/home2.jpg)', 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        position: 'absolute',
+        top: 60,
+        left: 0,
+      }}
+    >
+      <Container component="main" maxWidth="xl">
+        <Typography variant="h4" gutterBottom sx={{ mt: 3 }}>Available Flats</Typography>
+        <TextField
+          label="Search"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <Paper elevation={3} sx={{ borderRadius: '8px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)'}}>
+          <TableContainer component={Paper} sx={{ p: 3, borderRadius: '4px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)'}}>
+            <Table>
               <TableHead>
-                <TableRow >
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>City</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Street Name</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Street Number</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Price</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Area</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Year Built</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Available Date</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Has AC</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9em'}}>Fav/Unfav</TableCell>
+                <TableRow>
+                  <TableCell>
+                    <TableSortLabel
+                      active={sortType === 'city'}
+                      direction={sortOrder}
+                      onClick={() => handleSort('city')}
+                    >
+                      City
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={sortType === 'streetName'}
+                      direction={sortOrder}
+                      onClick={() => handleSort('streetName')}
+                    >
+                      Street Name
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                  <TableSortLabel
+                      active={sortType === 'streetNumber'}
+                      direction={sortOrder}
+                      onClick={() => handleSort('streetNumber')}
+                    >
+                      Street Number
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={sortType === 'rentPrice'}
+                      direction={sortOrder}
+                      onClick={() => handleSort('rentPrice')}
+                    >
+                      Price
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={sortType === 'areaSize'}
+                      direction={sortOrder}
+                      onClick={() => handleSort('areaSize')}
+                    >
+                      Area
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                  <TableSortLabel
+                      active={sortType === 'yearBuilt'}
+                      direction={sortOrder}
+                      onClick={() => handleSort('yearBuilt')}
+                    >
+                      Year Built
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                  <TableSortLabel
+                      active={sortType === 'availableDate'}
+                      direction={sortOrder}
+                      onClick={() => handleSort('availableDate')}
+                    >
+                      Available Date
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                  <TableSortLabel
+                      active={sortType === 'hasAC'}
+                      direction={sortOrder}
+                      onClick={() => handleSort('hasAC')}
+                    >
+                      Has AC
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>Fav/Unfav</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredFlats.map(flat => (
-                  <TableRow key={flat.id}                
-                   sx={{
-                    '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' },
-                    '&:nth-of-type(even)': { backgroundColor: '#ffffff' },
+                {filteredFlats.map((flat) => (
+                  <TableRow key={flat.id}
+                  sx={{
+                    '&:nth-of-type(odd)': { backgroundColor: 'transparent' },
+                    '&:nth-of-type(even)': { backgroundColor: 'transparent' },
                     '&:hover': {
-                      backgroundColor: '#e0e0e0',
+                      backgroundColor: 'transparent',
                       transition: 'background-color 0.3s ease', 
                     },
                       transition: 'transform 0.2s ease', 
@@ -285,7 +300,6 @@ const Home = () => {
                           startIcon={<SendIcon />}
                           variant="contained"
                           color="primary"
-                          sx={{ marginLeft: "75px"}} // Pushes button to the right
                         >
                           Send Message
                         </Button>
@@ -297,19 +311,18 @@ const Home = () => {
             </Table>
           </TableContainer>
         </Paper>
-      )}
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Are you sure you want to delete this flat?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)} color="primary">Cancel</Button>
-          <Button onClick={confirmDelete} color="secondary">Delete</Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+          <DialogTitle>Confirm Delete</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Are you sure you want to delete this flat?</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenDialog(false)} color="primary">Cancel</Button>
+            <Button onClick={confirmDelete} color="secondary">Delete</Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
     </Box>
   );
 };

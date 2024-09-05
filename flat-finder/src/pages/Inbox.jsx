@@ -207,6 +207,7 @@ const Inbox = () => {
               {sentMessages.length > 0 ? (
                 sentMessages.map((message) => (
                   <Paper
+                    maxWidth="md"
                     key={message.id}
                     sx={{
                       p: 2,

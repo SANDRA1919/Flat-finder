@@ -121,7 +121,7 @@ const Favorites = () => {
     }}
   >
     <Container component="main" maxWidth="xl">
-      <Paper elevation={3} sx={{ p: 3, mt: 3,width: '100%', overflow: 'hidden',  backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
+      <Paper  sx={{ p: 3, width: '100%',  backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
         {isMobile ? (
           <>
             <FormControl  margin="normal">
@@ -162,7 +162,7 @@ const Favorites = () => {
             </Grid>
           </>
         ) : (
-          <TableContainer >
+          <TableContainer component={Paper} sx={{ p: 3, borderRadius: '4px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
             <Table >
               <TableHead>
                 <TableRow >
