@@ -117,8 +117,8 @@ const AllUsers = () => {
       
       {/* Render table for larger screens and cards for smaller screens */}
       {!(isMobile || isTablet)? (
-  <Paper maxWidth='xl' sx={{ overflow: 'hidden', boxShadow: 6, backgroundColor: 'transparent', backdropFilter: "blur(10px)", width: '100%', maxWidth: '100vw' }}>
-    <Table sx={{ minWidth: '80vw', maxWidth: '100vw', fontSize: '1rem' }}>
+  <Paper  sx={{ overflow: 'hidden', boxShadow: 6, backgroundColor: 'transparent', backdropFilter: "blur(10px)", width: '100%', maxWidth: 'xl' }}>
+    <Table sx={{ minWidth: '80vw', maxWidth: '100vh', fontSize: '1rem' }}>
       <TableHead sx={{ backgroundColor: teal[700], color: 'white', height: '60px' }}>
         <TableRow sx={{ backgroundColor: teal[700], color: 'white', height: '60px' }}>
           <TableCell sx={{ fontWeight: 'bold', textAlign: 'center', color: green[100] }}>Name</TableCell>

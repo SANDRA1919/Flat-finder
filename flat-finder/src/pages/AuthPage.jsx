@@ -52,11 +52,13 @@ const AuthPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+  
     if (isRegister) {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
         const user = userCredential.user;
+  
+        // Store user details in Firestore
         await setDoc(doc(db, 'users', user.uid), {
           uid: user.uid,
           firstName: form.firstName,
@@ -65,7 +67,12 @@ const AuthPage = () => {
           birthDate: form.birthDate,
           isAdmin: false,
         });
-        toast.success('Registration successful');
+  
+        // Immediately sign out after registration
+        await auth.signOut();
+  
+        // Notify success and redirect to login
+        toast.success('Registration successful. Please log in.');
         navigate('/login');
       } catch (error) {
         toast.error(`Error: ${error.message}`);
@@ -82,17 +89,33 @@ const AuthPage = () => {
   };
 
   return (
+    <Box
+      sx={{
+        minHeight: '100vh',
+        width: '100vw', // Ensures full-width coverage
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: 'url(/img/login.jpg)', 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        position: 'absolute', // Ensure the image covers the whole viewport
+        top: 60,
+        left: 0,
+      }}
+    >
     <Container
-  component="main"
-  maxWidth="md"
-  sx={{
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh', // Adjusted height for better vertical centering
-    px: 2,
-  }}
->
+      component="main"
+      maxWidth="md"
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh', // Adjusted height for better vertical centering
+        px: 2,
+      }}
+    >
   <Paper
     elevation={10}
     sx={{
@@ -103,14 +126,16 @@ const AuthPage = () => {
       borderRadius: 3,
       overflow: 'hidden', 
       position: 'relative', 
+       backgroundColor: 'transparent', backdropFilter: 'blur(10px)'
     }}
   >
     {/* Sliding container for form and buttons */}
     <Box
       sx={{
         display: 'flex',
-        width: '200%', 
-        transform: `translateX(${isRegister ? '0%' : '-50%'})`, 
+        width: '100%', 
+        height: '100%',
+        transform: `translateY(${isRegister ? '0%' : '0%'})`, 
         transition: 'transform 0.6s ease-in-out', // Smooth transition effect
       }}
     >
@@ -279,7 +304,7 @@ const AuthPage = () => {
     </Box>
   </Paper>
 </Container>
-
+</Box>            
   );
 };
 
