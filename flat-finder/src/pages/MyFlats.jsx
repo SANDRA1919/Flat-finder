@@ -57,7 +57,7 @@ const MyFlats = () => {
     <Box
     sx={{
       minHeight: '100vh',
-      width: '100vw', // Ensures full-width coverage
+      width: '100%', // Ensures full-width coverage
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',

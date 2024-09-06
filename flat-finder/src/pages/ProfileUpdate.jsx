@@ -87,8 +87,24 @@ const ProfileUpdate = () => {
   }
 
   return (
+    <Box
+    sx={{
+      minHeight: '100vh',
+      width: '100%', // Ensures full-width coverage
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundImage: 'url(/img/profile.jpg)', // Path to your background image
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'absolute', // Ensure the image covers the whole viewport
+      top: 60,
+      left: 0,
+    }}
+  >
     <Container component="main" maxWidth="sm">
-      <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+      <Paper elevation={3} sx={{ p: 3, mt: 3, backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
         <Typography variant="h4" gutterBottom>
           Update Profile
         </Typography>
@@ -150,6 +166,7 @@ const ProfileUpdate = () => {
         </DialogActions>
       </Dialog>
     </Container>
+    </Box>
   );
 };
 

@@ -106,8 +106,8 @@ const Favorites = () => {
   return (
     <Box
     sx={{
-      minHeight: '100vh',
-      width: '100vw', // Ensures full-width coverage
+      minHeight: '100%',
+      width: '100%', // Ensures full-width coverage
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -164,7 +164,7 @@ const Favorites = () => {
         ) : (
           <TableContainer component={Paper} sx={{ p: 3, borderRadius: '4px', backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
             <Table >
-              <TableHead>
+              <TableHead >
                 <TableRow >
                   <TableCell>
                     <TableSortLabel
