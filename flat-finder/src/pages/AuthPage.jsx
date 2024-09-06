@@ -122,23 +122,13 @@ const AuthPage = () => {
       display: 'flex',
       width: '120vh',
       maxWidth: '200%', // Ensure it doesn't overflow
-      height: 'auto',
+      height: '520px',
       borderRadius: 3,
       overflow: 'hidden', 
       position: 'relative', 
        backgroundColor: 'transparent', backdropFilter: 'blur(10px)'
     }}
   >
-    {/* Sliding container for form and buttons */}
-    <Box
-      sx={{
-        display: 'flex',
-        width: '100%', 
-        height: '100%',
-        transform: `translateY(${isRegister ? '0%' : '0%'})`, 
-        transition: 'transform 0.6s ease-in-out', // Smooth transition effect
-      }}
-    >
       {/* Left side (Register form) */}
       <Box
         sx={{
@@ -301,7 +291,6 @@ const AuthPage = () => {
           </Button>
         </Box>
       </Box>
-    </Box>
   </Paper>
 </Container>
 </Box>            
