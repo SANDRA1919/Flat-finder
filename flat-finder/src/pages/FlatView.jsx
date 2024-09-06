@@ -27,6 +27,22 @@ const FlatView = () => {
   }, [id]);
 
   return flat ? (
+    <Box
+    sx={{
+      minHeight: '100vh',
+      width: '100vw',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundImage: 'url(/img/favorites.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'absolute',
+      top: 60,
+      left: 0,
+    }}
+  >
     <Container component="main" maxWidth="md">
       <Paper 
         elevation={3} 
@@ -37,9 +53,9 @@ const FlatView = () => {
           alignItems: 'center', 
           justifyContent: 'center', 
           minHeight: '400px', 
-          border: '2px solid green', 
-          boxShadow: '0 4px 8px rgba(0, 128, 0, 0.2)', // Verde smarald pentru border și umbră
-          borderRadius: '10px' // Adăugăm colțuri rotunjite
+          borderRadius: '10px',
+          backgroundColor: 'transparent',
+          backdropFilter: "blur(10px)" 
         }}
       >
         <Box textAlign="center">
@@ -54,6 +70,7 @@ const FlatView = () => {
         </Box>
       </Paper>
     </Container>
+    </Box>
   ) : <div>Loading...</div>;
 };
 

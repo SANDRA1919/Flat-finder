@@ -51,11 +51,13 @@ const AuthPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+  
     if (isRegister) {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
         const user = userCredential.user;
+  
+        // Store user details in Firestore
         await setDoc(doc(db, 'users', user.uid), {
           uid: user.uid,
           firstName: form.firstName,
@@ -64,7 +66,12 @@ const AuthPage = () => {
           birthDate: form.birthDate,
           isAdmin: false,
         });
-        toast.success('Registration successful');
+  
+        // Immediately sign out after registration
+        await auth.signOut();
+  
+        // Notify success and redirect to login
+        toast.success('Registration successful. Please log in.');
         navigate('/login');
       } catch (error) {
         toast.error(`Error: ${error.message}`);
@@ -96,17 +103,55 @@ const AuthPage = () => {
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth="none"
+    <Box
       sx={{
+        minHeight: '100vh',
+        width: '100vw', // Ensures full-width coverage
         display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor:'red',
-        px: 2,
+        justifyContent: 'center',
+        backgroundImage: 'url(/img/login.jpg)', 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        position: 'absolute', // Ensure the image covers the whole viewport
+        top: 60,
+        left: 0,
       }}
     >
+    <Container
+  component="main"
+  maxWidth="md"
+  sx={{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh', // Adjusted height for better vertical centering
+    px: 2,
+  }}
+>
+  <Paper
+    elevation={10}
+    sx={{
+      display: 'flex',
+      width: '120vh',
+      maxWidth: '100%', // Ensure it doesn't overflow
+      height: 'auto',
+      borderRadius: 3,
+      overflow: 'hidden', 
+      position: 'relative', 
+    }}
+  >
+    {/* Sliding container for form and buttons */}
+    <Box
+      sx={{
+        display: 'flex',
+        width: '200%', 
+        transform: `translateX(${isRegister ? '0%' : '-50%'})`, 
+        transition: 'transform 0.6s ease-in-out', // Smooth transition effect
+      }}
+    >
+      {/* Left side (Register form) */}
       <Box
         sx={{
           display: 'flex',
@@ -124,168 +169,143 @@ const AuthPage = () => {
             width: '50%',
             backgroundColor: '#004d40',
             color: '#fff',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            p: 4,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            height: '100%',
-            transition: 'transform 0.6s ease-in-out',
-            transform: isRegister ? 'translateX(0)' : 'translateX(-100%)',
-            zIndex: isRegister ? 1 : 0,
+            '&:hover': {
+              backgroundColor: '#fff',
+              color: '#004d40',
+            },
           }}
         >
-          <Typography variant="h4" align="center" gutterBottom>
-            Bun venit!
-          </Typography>
-          <Typography variant="h6" align="center">
-            Înregistrează-te sau autentifică-te pentru a accesa contul tău.
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            width: '50%',
-            backgroundColor: '#fff',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            p: 4,
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            height: '100%',
-            transition: 'transform 0.6s ease-in-out',
-            transform: isRegister ? 'translateX(100%)' : 'translateX(0)',
-            zIndex: isRegister ? 0 : 1,
-          }}
-        >
-          <Typography variant="h4" align="center" gutterBottom>
-            {isRegister ? "Creează un Cont" : "Autentifică-te în Contul Tău"}
-          </Typography>
+          {isRegister ? "Have an account? Login" : "New here? Register"}
+        </Button>
+      </Box>
 
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            {isRegister && (
-              <>
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  id="firstName"
-                  label="Prenume"
-                  name="firstName"
-                  autoComplete="given-name"
-                  autoFocus
-                  value={form.firstName}
-                  onChange={handleChange}
-                  error={Boolean(errors.firstName)}
-                  helperText={errors.firstName}
-                  size="small"
-                  sx={{ mb: 1 }}
-                />
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  id="lastName"
-                  label="Nume"
-                  name="lastName"
-                  autoComplete="family-name"
-                  value={form.lastName}
-                  onChange={handleChange}
-                  error={Boolean(errors.lastName)}
-                  helperText={errors.lastName}
-                  size="small"
-                  sx={{ mb: 1 }}
-                />
-              </>
-            )}
-            <TextField
-              margin="normal"
-              fullWidth
-              id="email"
-              label="Adresă de Email"
-              name="email"
-              autoComplete="email"
-              value={form.email}
-              onChange={handleChange}
-              error={Boolean(errors.email)}
-              helperText={errors.email}
-              size="small"
-              sx={{ mb: 1 }}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              name="password"
-              label="Parolă"
-              type="password"
-              id="password"
-              autoComplete={isRegister ? "new-password" : "current-password"}
-              value={form.password}
-              onChange={handleChange}
-              error={Boolean(errors.password)}
-              helperText={errors.password}
-              size="small"
-              sx={{ mb: 1 }}
-            />
-            {isRegister && (
-              <>
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  name="confirmPassword"
-                  label="Confirmă Parola"
-                  type="password"
-                  id="confirmPassword"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  error={Boolean(errors.confirmPassword)}
-                  helperText={errors.confirmPassword}
-                  size="small"
-                  sx={{ mb: 1 }}
-                />
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  name="birthDate"
-                  label="Data Nașterii"
-                  type="date"
-                  id="birthDate"
-                  InputLabelProps={{ shrink: true }}
-                  value={form.birthDate}
-                  onChange={handleChange}
-                  error={Boolean(errors.birthDate)}
-                  helperText={errors.birthDate}
-                  size="small"
-                  sx={{ mb: 1 }}
-                />
-              </>
-            )}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{
-                mt: 2,
-                backgroundColor: '#004d40',
-                '&:hover': { backgroundColor: '#00796b' },
-              }}
-            >
-              {isRegister ? "Înregistrează-te" : "Autentifică-te"}
-            </Button>
-            <Button
-              onClick={toggleMode}
-              fullWidth
-              sx={{ mt: 2 }}
-            >
-              {isRegister ? "Ai deja un cont? Autentifică-te" : "Nu ai un cont? Înregistrează-te"}
-            </Button>
-          </Box>
+      {/* Right side (Form section) */}
+      <Box
+        sx={{
+          width: '50%', 
+          padding: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        <Typography variant="h6" align="center" sx={{ mb: 2 }}>
+          {isRegister ? "Create an Account" : "Login to Your Account"}
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          {isRegister && (
+            <>
+              <TextField
+                margin="normal"
+                fullWidth
+                id="firstName"
+                label="First Name"
+                name="firstName"
+                autoComplete="given-name"
+                autoFocus
+                value={form.firstName}
+                onChange={handleChange}
+                error={Boolean(errors.firstName)}
+                helperText={errors.firstName}
+                size="small"
+                sx={{ mb: 1 }}
+              />
+              <TextField
+                margin="normal"
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="family-name"
+                value={form.lastName}
+                onChange={handleChange}
+                error={Boolean(errors.lastName)}
+                helperText={errors.lastName}
+                size="small"
+                sx={{ mb: 1 }}
+              />
+            </>
+          )}
+          <TextField
+            margin="normal"
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            value={form.email}
+            onChange={handleChange}
+            error={Boolean(errors.email)}
+            helperText={errors.email}
+            size="small"
+            sx={{ mb: 1 }}
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete={isRegister ? "new-password" : "current-password"}
+            value={form.password}
+            onChange={handleChange}
+            error={Boolean(errors.password)}
+            helperText={errors.password}
+            size="small"
+            sx={{ mb: 1 }}
+          />
+          {isRegister && (
+            <>
+              <TextField
+                margin="normal"
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                id="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                error={Boolean(errors.confirmPassword)}
+                helperText={errors.confirmPassword}
+                size="small"
+                sx={{ mb: 1 }}
+              />
+              <TextField
+                margin="normal"
+                fullWidth
+                name="birthDate"
+                label="Birth Date"
+                type="date"
+                id="birthDate"
+                InputLabelProps={{ shrink: true }}
+                value={form.birthDate}
+                onChange={handleChange}
+                error={Boolean(errors.birthDate)}
+                helperText={errors.birthDate}
+                size="small"
+                sx={{ mb: 1 }}
+              />
+            </>
+          )}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{
+              mt: 2,
+              backgroundColor: '#004d40',
+              '&:hover': { backgroundColor: '#00796b' },
+            }}
+          >
+            {isRegister ? "Register" : "Login"}
+          </Button>
         </Box>
       </Box>
-    </Container>
+    </Box>
+  </Paper>
+</Container>
+
   );
 };
 

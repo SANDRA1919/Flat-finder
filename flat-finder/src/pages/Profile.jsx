@@ -63,25 +63,30 @@ const Profile = () => {
       left: 0,
     }}
   >
-    <Container component="main" maxWidth="sm">
-      <Paper elevation={3} sx={{ p: 3, mt: 3, border: '2px solid #4CAF50', backgroundColor: '#F0FFF0' }}>
-        <Typography variant="h4" gutterBottom>
+    <Container component="main" maxWidth="lg">
+      <Paper elevation={3} sx={{ p: 3, mt: 3,  backgroundColor: 'transparent', backdropFilter: "blur(10px)", 
+      minHeight: '50vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',  }}>
+
+        <Box>
+        <Typography variant="h3" gutterBottom>
           Profile
         </Typography>
-        <Box>
-          <Typography variant="body1">
+          <Typography variant="h5">
             <strong>First Name:</strong> {user?.firstName}
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="h5">
             <strong>Last Name:</strong> {user?.lastName}
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="h5">
             <strong>Email:</strong> {user?.email}
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="h5">
             <strong>Birth Date:</strong> {birthDate}
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="h5">
             <strong>Admin:</strong> {isAdmin ? 'Yes' : 'No'}
           </Typography>
           <Box sx={{ mt: 2 }}>
@@ -89,10 +94,10 @@ const Profile = () => {
               direction={{ xs: 'column', sm: 'row' }} // Stack in a column on xs and row on sm and above
               spacing={2} // Space between the buttons
             >
-              <Button variant="contained" color="primary" onClick={() => navigate(`/profile-update/${user.uid}`)}>
+              <Button variant="contained" color="primary" size='large' onClick={() => navigate(`/profile-update/${user.uid}`)}>
                 Edit Profile
               </Button>
-              <Button variant="contained" color="error" onClick={handleOpenDialog}>
+              <Button variant="contained" color="error" size='large'  onClick={handleOpenDialog}>
                 Delete Account
               </Button>
             </Stack>

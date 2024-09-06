@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import FlatForm from '../components/FlatForm';
 import { toast } from 'react-toastify';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Box, Container } from '@mui/material';
 
 const EditFlat = () => {
   const { id } = useParams();
@@ -53,8 +53,24 @@ const EditFlat = () => {
   };
 
   return (
-    <>
-      {flat ? <FlatForm flat={flat} onSubmit={handleFormSubmit} /> : <div>Loading...</div>}
+      <Box
+      sx={{
+        minHeight: '100vh',
+        width: '100vw',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage: 'url(/img/favorites.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        position: 'absolute',
+        top: 60,
+        left: 0,
+      }}
+    >
+    <Container maxWidth= 'md' sx = {{backgroundColor: 'transparent', backdropFilter: "blur(10px)"}}>
+      {flat ? <FlatForm   flat={flat} onSubmit={handleFormSubmit} /> : <div>Loading...</div>}
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Confirm Update</DialogTitle>
@@ -72,7 +88,8 @@ const EditFlat = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Container>
+   </Box>
   );
 };
 

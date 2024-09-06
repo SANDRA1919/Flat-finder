@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Paper, Typography } from '@mui/material';
+import { Container, Paper, Typography, Box } from '@mui/material';
 import { db } from '../firebase';
 import { doc, getDoc, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { useAuth } from '../hooks/useAuth';
@@ -39,8 +39,24 @@ const SendMessage = () => {
   }, [flatId]);
 
   return (
+    <Box
+    sx={{
+      minHeight: '100vh',
+      width: '100vw',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundImage: 'url(/img/pexels-nietjuh-1809342.jpg)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      position: 'absolute',
+      top: 60,
+      left: 0,
+    }}
+  >
     <Container component="main" maxWidth="sm">
-      <Paper elevation={3} sx={{ p: 3, mt: 3 }}>
+      <Paper elevation={3} sx={{ p: 3, mt: 3, backgroundColor: 'transparent', backdropFilter: "blur(10px)"  }}>
         <Typography variant="h5" gutterBottom>Send Message</Typography>
         {recipientId && user && (
           <>
@@ -59,6 +75,7 @@ const SendMessage = () => {
         )}
       </Paper>
     </Container>
+    </Box>
   );
 };
 
