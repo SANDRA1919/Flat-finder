@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { TextField, Button, Paper, Typography, Box, Container } from '@mui/material';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
@@ -6,6 +7,7 @@ import { setDoc, doc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import validator from 'validator';
+import { motion } from 'framer-motion';
 
 const AuthPage = () => {
   const [isRegister, setIsRegister] = useState(true);
@@ -75,7 +77,6 @@ const AuthPage = () => {
         navigate('/login');
       } catch (error) {
         toast.error(`Error: ${error.message}`);
-        console.error('Error during registration:', error);
       }
     } else {
       try {
@@ -83,30 +84,16 @@ const AuthPage = () => {
         toast.success('Login successful');
         navigate('/');
       } catch (error) {
-        toast.error(`Error: ${error.message}`);
-        console.error('Error during login:', error);
+        toast.error('Invalid email or password');
       }
     }
-  };
-
-  const toggleMode = () => {
-    setIsRegister(!isRegister);
-    setForm({
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      birthDate: '',
-    });
-    setErrors({});
   };
 
   return (
     <Box
       sx={{
         minHeight: '100vh',
-        width: '100vw', // Ensures full-width coverage
+        width: '100%', // Ensures full-width coverage
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -120,54 +107,67 @@ const AuthPage = () => {
       }}
     >
     <Container
-  component="main"
-  maxWidth="md"
-  sx={{
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh', // Adjusted height for better vertical centering
-    px: 2,
-  }}
->
+      component="main"
+      maxWidth="md"
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh', // Adjusted height for better vertical centering
+        px: 2,
+      }}
+    >
   <Paper
     elevation={10}
     sx={{
       display: 'flex',
       width: '120vh',
-      maxWidth: '100%', // Ensure it doesn't overflow
+      maxWidth: '200%', // Ensure it doesn't overflow
       height: 'auto',
       borderRadius: 3,
       overflow: 'hidden', 
       position: 'relative', 
+       backgroundColor: 'transparent', backdropFilter: 'blur(10px)'
     }}
   >
     {/* Sliding container for form and buttons */}
     <Box
       sx={{
         display: 'flex',
-        width: '200%', 
-        transform: `translateX(${isRegister ? '0%' : '-50%'})`, 
+        width: '100%', 
+        height: '100%',
+        transform: `translateY(${isRegister ? '0%' : '0%'})`, 
         transition: 'transform 0.6s ease-in-out', // Smooth transition effect
       }}
     >
       {/* Left side (Register form) */}
       <Box
         sx={{
+          width: '50%', 
+          backgroundColor: '#004d40',
+          color: '#fff',
+          p: 2,
           display: 'flex',
-          width: '100%',
-          maxWidth: '1200px',
-          height: '80vh',
-          borderRadius: 3,
-          overflow: 'hidden',
-          boxShadow: 10,
-          position: 'relative',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
         }}
       >
-        <Box
+        <Typography variant="h4" gutterBottom>
+          {isRegister ? "Welcome to Flat Finder!" : "Welcome Back!"}
+        </Typography>
+        <Typography variant="body1">
+          {isRegister
+            ? "Register to find your dream flat today!"
+            : "Log in to continue your journey."}
+        </Typography>
+        <Button
+          variant="outlined"
+          onClick={() => setIsRegister(!isRegister)}
           sx={{
-            width: '50%',
-            backgroundColor: '#004d40',
+            mt: 6,
+            borderColor: '#fff',
             color: '#fff',
             '&:hover': {
               backgroundColor: '#fff',
@@ -305,7 +305,7 @@ const AuthPage = () => {
     </Box>
   </Paper>
 </Container>
-
+</Box>            
   );
 };
 
