@@ -123,7 +123,7 @@ const Inbox = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        width: '100vw',
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -184,13 +184,13 @@ const Inbox = () => {
                         <Typography variant="body2" sx={{ color: '#004d40', textAlign: 'left' }}>{message.message}</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', mt: 1 }}>
-                        <Button variant="outlined" color="primary" onClick={() => handleViewMessage(message)} sx={{ mr: 2 }}>
+                        <Button variant="outlined" color="primary" onClick={() => handleViewMessage(message)} sx={{ mr: 1 }}>
                           View
                         </Button>
-                        <Button variant="contained" color="error" startIcon={<DeleteIcon />} onClick={() => handleOpenDeleteDialog(message.id)} sx={{ mr: 2 }}>
+                        <Button variant="contained" color="error" startIcon={<DeleteIcon />} onClick={() => handleOpenDeleteDialog(message.id)} sx={{ mr: 1 }}>
                           Delete
                         </Button>
-                        <Button variant="outlined" color="info" startIcon={<ReplyIcon />} onClick={() => handleReplyMessage(message)} sx={{ mr: 2 }}>
+                        <Button variant="outlined" color="info" startIcon={<ReplyIcon />} onClick={() => handleReplyMessage(message)} sx={{ mr: 1 }}>
                           Reply
                         </Button>
                       </Box>

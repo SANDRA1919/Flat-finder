@@ -89,20 +89,28 @@ const Home = () => {
     try {
       const flatRef = doc(db, 'flats', flatId);
       const flat = flats.find(flat => flat.id === flatId);
-      if (flat.favorites && flat.favorites.includes(user.uid)) {
+  
+      // Initialize favorites as an empty array if it's undefined
+      const favorites = flat.favorites || [];
+  
+      if (favorites.includes(user.uid)) {
+        // Remove from favorites if user already favorited
         await updateDoc(flatRef, {
           favorites: arrayRemove(user.uid),
         });
-        setFlats(flats.map(flat => flat.id === flatId ? { ...flat, favorites: flat.favorites.filter(uid => uid !== user.uid) } : flat));
+        setFlats(flats.map(flat => flat.id === flatId ? { ...flat, favorites: favorites.filter(uid => uid !== user.uid) } : flat));
       } else {
+        // Add to favorites if not already favorited
         await updateDoc(flatRef, {
           favorites: arrayUnion(user.uid),
         });
-        setFlats(flats.map(flat => flat.id === flatId ? { ...flat, favorites: [...flat.favorites, user.uid] } : flat));
+        setFlats(flats.map(flat => flat.id === flatId ? { ...flat, favorites: [...favorites, user.uid] } : flat));
       }
+  
       toast.success('Favorite status updated');
     } catch (error) {
       toast.error('Error updating favorite status');
+      console.error('Error updating favorite:', error);
     }
   };
 
@@ -193,12 +201,12 @@ const Home = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        width: '100vw',
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundImage: 'url(/img/home.jpg)',
-        backgroundSize: 'cover',
+        backgroundSize: 'contained',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         position: 'absolute',
