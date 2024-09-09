@@ -206,7 +206,7 @@ const Home = () => {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundImage: 'url(/img/home.jpg)',
-        backgroundSize: 'contained',
+        backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         position: 'absolute',
