@@ -37,7 +37,7 @@ const AuthPage = () => {
       else if (!validator.isEmail(form.email)) tempErrors.email = "Invalid Email";
       if (!form.password) tempErrors.password = "Password is required";
       else if (form.password.length < 6) tempErrors.password = "Password must be at least 6 characters";
-      else if (!validator.isStrongPassword(form.password, { minSymbols: 1 })) tempErrors.password = "Password must contain at least one symbol";
+      else if (!validator.isStrongPassword(form.password, { minSymbols: 1 })) tempErrors.password = "Password must contain at least one symbol, one number and one capital letter";
       if (form.password !== form.confirmPassword) tempErrors.confirmPassword = "Passwords do not match";
       if (!form.birthDate) tempErrors.birthDate = "Birth Date is required";
     } else {
@@ -117,8 +117,8 @@ const AuthPage = () => {
     sx={{
       display: 'flex',
       width: '120vh',
-      maxWidth: '200%', // Ensure it doesn't overflow
-      height: '520px',
+      maxWidth: '200%',
+      height: '530px',
       borderRadius: 3,
       overflow: 'hidden', 
       position: 'relative', 
