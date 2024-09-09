@@ -122,25 +122,24 @@ const Home = () => {
     const isAsc = sortType === type && sortOrder === 'asc';
     setSortOrder(isAsc ? 'desc' : 'asc');
     setSortType(type);
-
+  
     let sortedFlats = [...flats];
     if (type === 'rentPrice') {
       sortedFlats.sort((a, b) => isAsc ? b.rentPrice - a.rentPrice : a.rentPrice - b.rentPrice);
     } else if (type === 'areaSize') {
       sortedFlats.sort((a, b) => isAsc ? b.areaSize - a.areaSize : a.areaSize - b.areaSize);
     } else if (type === 'city') {
-      sortedFlats.sort((a, b) => isAsc ? b.city.localeCompare(a.city) : a.city.localeCompare(b.city));
+      sortedFlats.sort((a, b) => isAsc ? a.city.localeCompare(b.city) : b.city.localeCompare(a.city));
     } else if (type === 'streetNumber') {
       sortedFlats.sort((a, b) => isAsc ? b.streetNumber - a.streetNumber : a.streetNumber - b.streetNumber);
+    } else if (type === 'streetName') {
+      sortedFlats.sort((a, b) => isAsc ? a.streetName.localeCompare(b.streetName) : b.streetName.localeCompare(a.streetName));
     } else if (type === 'yearBuilt') {
       sortedFlats.sort((a, b) => isAsc ? b.yearBuilt - a.yearBuilt : a.yearBuilt - b.yearBuilt);
     } else if (type === 'availableDate') {
       sortedFlats.sort((a, b) => {
-        const dateA = new Date(a.availableDate);
-        const dateB = new Date(b.availableDate);
-        if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
-          console.error('Invalid date:', a.availableDate, b.availableDate);
-        }
+        const dateA = new Date(a.dateAvailable);
+        const dateB = new Date(b.dateAvailable);
         return isAsc ? dateA - dateB : dateB - dateA;
       });
     } else if (type === 'hasAC') {
@@ -152,10 +151,7 @@ const Home = () => {
     }
     setFlats(sortedFlats);
   };
-
-  const handleSortChange = (event) => {
-    setSortOption(event.target.value);
-  };
+  
 
   useEffect(() => {
     const sortedFlats = [...flats];
