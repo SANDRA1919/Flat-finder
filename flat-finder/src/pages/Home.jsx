@@ -287,7 +287,7 @@ const Home = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx = {{fontWeight: 'bold', fontSize: '20px'}}>
+                    <TableCell sx = {{fontWeight: 'bold', fontSize: '18px'}}>
                       <TableSortLabel
                         active={sortType === 'city'}
                         direction={sortOrder}
@@ -296,7 +296,7 @@ const Home = () => {
                         City
                       </TableSortLabel>
                     </TableCell>
-                    <TableCell sx = {{fontWeight: 'bold', fontSize: '20px'}}>
+                    <TableCell sx = {{fontWeight: 'bold', fontSize: '18px'}}>
                       <TableSortLabel
                         active={sortType === 'streetName'}
                         direction={sortOrder}
@@ -305,7 +305,7 @@ const Home = () => {
                         Street Name
                       </TableSortLabel>
                     </TableCell>
-                    <TableCell sx = {{fontWeight: 'bold', fontSize: '20px'}}>
+                    <TableCell sx = {{fontWeight: 'bold', fontSize: '18px'}}>
                       <TableSortLabel
                         active={sortType === 'streetNumber'}
                         direction={sortOrder}
@@ -314,7 +314,7 @@ const Home = () => {
                         Street Number
                       </TableSortLabel>
                     </TableCell>
-                    <TableCell sx = {{fontWeight: 'bold', fontSize: '20px'}}>
+                    <TableCell sx = {{fontWeight: 'bold', fontSize: '18px'}}>
                       <TableSortLabel
                         active={sortType === 'rentPrice'}
                         direction={sortOrder}
@@ -323,7 +323,7 @@ const Home = () => {
                         Price
                       </TableSortLabel>
                     </TableCell>
-                    <TableCell sx = {{fontWeight: 'bold', fontSize: '20px'}}>
+                    <TableCell sx = {{fontWeight: 'bold', fontSize: '18px'}}>
                       <TableSortLabel
                         active={sortType === 'areaSize'}
                         direction={sortOrder}
@@ -332,7 +332,7 @@ const Home = () => {
                         Area
                       </TableSortLabel>
                     </TableCell>
-                    <TableCell sx = {{fontWeight: 'bold', fontSize: '20px'}}>
+                    <TableCell sx = {{fontWeight: 'bold', fontSize: '18px'}}>
                       <TableSortLabel
                         active={sortType === 'yearBuilt'}
                         direction={sortOrder}
@@ -341,7 +341,7 @@ const Home = () => {
                         Year Built
                       </TableSortLabel>
                     </TableCell>
-                    <TableCell sx = {{fontWeight: 'bold', fontSize: '20px'}}>
+                    <TableCell sx = {{fontWeight: 'bold', fontSize: '18px'}}>
                       <TableSortLabel
                         active={sortType === 'availableDate'}
                         direction={sortOrder}
@@ -350,7 +350,7 @@ const Home = () => {
                         Available Date
                       </TableSortLabel>
                     </TableCell>
-                    <TableCell sx = {{fontWeight: 'bold', fontSize: '20px'}}>
+                    <TableCell sx = {{fontWeight: 'bold', fontSize: '18px'}}>
                       <TableSortLabel
                         active={sortType === 'hasAC'}
                         direction={sortOrder}
@@ -359,7 +359,7 @@ const Home = () => {
                         Has AC
                       </TableSortLabel>
                     </TableCell>
-                    <TableCell sx = {{fontWeight: 'bold', fontSize: '20px'}}>
+                    <TableCell sx = {{fontWeight: 'bold', fontSize: '18px'}}>
                       Actions
                     </TableCell>
                   </TableRow>
