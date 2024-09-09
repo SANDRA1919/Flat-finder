@@ -124,8 +124,8 @@ const Favorites = () => {
       <Paper maxWidth = 'xl'  sx={{ width: '100%',  backgroundColor: 'transparent', backdropFilter: 'blur(10px)', }}>
         {isMobile ? (
           <>
-            <FormControl  margin="normal">
-              <InputLabel>Sort By</InputLabel>
+            <FormControl fullWidth  margin="normal">
+              <InputLabel >Sort By</InputLabel>
               <Select
                 value={sortConfig.key}
                 onChange={(e) => handleSort(e.target.value)}
@@ -142,8 +142,8 @@ const Favorites = () => {
             <Grid container spacing={2}>
               {sortedFavorites.map((flat) => (
                 <Grid item xs={12} key={flat.id}>
-                  <Card>
-                    <CardContent>
+                  <Card sx = {{backgroundColor: 'transparent', backdropFilter: 'blur(10px)',}}>
+                    <CardContent >
                       <Typography variant="h6"><strong>City:</strong> {flat.city}</Typography>
                       <Typography variant="h6"><strong>Street:</strong> {flat.streetName} {flat.streetNumber}</Typography>
                       <Typography variant="h6"><strong>Price:</strong> {flat.rentPrice}</Typography>

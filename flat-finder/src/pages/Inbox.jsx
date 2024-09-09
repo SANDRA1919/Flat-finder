@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Paper, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, Box, TextField, Tabs, Tab } from '@mui/material';
 import { toast } from 'react-toastify';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -19,6 +19,7 @@ const Inbox = () => {
   const [openReplyDialog, setOpenReplyDialog] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [tabValue, setTabValue] = useState(0); // State for tabs
+  const unreadMessageRef = useRef(null); // Ref to store the first unread message
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -38,6 +39,11 @@ const Inbox = () => {
 
           // Mark received messages as read
           const unreadMessages = inboxList.filter(msg => msg.recipientId === user.uid && !msg.isRead);
+          if (unreadMessages.length > 0 && unreadMessageRef.current) {
+            // Scroll to the first unread message
+            unreadMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+
           for (const message of unreadMessages) {
             await updateDoc(doc(db, 'messages', message.id), { isRead: true });
           }
@@ -164,9 +170,10 @@ const Inbox = () => {
           {tabValue === 0 && (
             <>
               {messages.length > 0 ? (
-                messages.map((message) => (
+                messages.map((message, index) => (
                   <Paper
                     key={message.id}
+                    ref={index === 0 && !message.isRead ? unreadMessageRef : null} // Focus the first unread message
                     sx={{
                       p: 2,
                       mt: 2,
