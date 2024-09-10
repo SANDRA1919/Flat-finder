@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { TextField, Button, Checkbox, FormControlLabel, Paper, Typography, Box, Container } from '@mui/material';
+import { 
+  TextField, 
+  Button, 
+  Checkbox, 
+  FormControlLabel, 
+  Paper, 
+  Typography, 
+  Box, 
+  Container } from '@mui/material';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { setDoc, doc } from 'firebase/firestore';

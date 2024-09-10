@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Container, TextField, Button, Checkbox, FormControlLabel, Box, Typography } from '@mui/material';
+import { 
+  Container, 
+  TextField, 
+  Button, 
+  Checkbox, 
+  FormControlLabel, 
+  Box, 
+  Typography } from '@mui/material';
 
 const FlatForm = ({ flat, onSubmit }) => {
   const [formState, setFormState] = useState(flat || {

@@ -5,7 +5,7 @@ import { db } from '../firebase';
 
 const MessageList = ({ messages, currentUserId, recipientId }) => {
   
-  // Funcție pentru a marca mesajele ca citite
+  // Function to mark messages as read
   const markMessagesAsRead = async () => {
     const unreadMessages = messages.filter(msg => msg.recipientId === currentUserId && !msg.isRead);
     for (const message of unreadMessages) {
@@ -13,7 +13,7 @@ const MessageList = ({ messages, currentUserId, recipientId }) => {
     }
   };
 
-  // Marchează mesajele ca citite când componenta se montează
+  //  Mark the messages as read when the component is mounte
   useEffect(() => {
     markMessagesAsRead();
   }, [messages, currentUserId]);

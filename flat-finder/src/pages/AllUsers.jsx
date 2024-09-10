@@ -1,7 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, doc, updateDoc, deleteDoc, query, where, getCountFromServer, writeBatch } from 'firebase/firestore';
-import { Button, Table, TableBody, TableCell, TableHead, TableRow, Paper, Typography, IconButton, Box, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Card, CardContent, Grid, useMediaQuery } from '@mui/material';
+import { 
+  collection, 
+  getDocs, 
+  doc, 
+  updateDoc, 
+  deleteDoc, 
+  query, 
+  where, 
+  getCountFromServer, 
+  writeBatch } from 'firebase/firestore';
+import { 
+  Button, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableRow, 
+  Paper, 
+  Typography, 
+  IconButton, 
+  Box, Tooltip, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle, 
+  Card, 
+  CardContent, 
+  Grid, 
+  useMediaQuery } from '@mui/material';
 import { toast } from 'react-toastify';
 import { Delete as DeleteIcon, AdminPanelSettings as AdminIcon } from '@mui/icons-material';
 import { green, teal } from '@mui/material/colors';
