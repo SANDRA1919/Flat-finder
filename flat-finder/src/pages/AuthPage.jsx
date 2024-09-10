@@ -1,7 +1,16 @@
 
 import React, { useState } from 'react';
-import { TextField, Button, Paper, Typography, Box, Container } from '@mui/material';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { 
+  TextField, 
+  Button, 
+  Paper, 
+  Typography, 
+  Box, 
+  Container, 
+  CircularProgress } from '@mui/material';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { setDoc, doc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +28,7 @@ const AuthPage = () => {
     birthDate: '',
   });
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false); // New loading state
+  const [loading, setLoading] = useState(false);  // New loading state
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -39,7 +48,7 @@ const AuthPage = () => {
       else if (!validator.isEmail(form.email)) tempErrors.email = "Invalid Email";
       if (!form.password) tempErrors.password = "Password is required";
       else if (form.password.length < 6) tempErrors.password = "Password must be at least 6 characters";
-      else if (!validator.isStrongPassword(form.password, { minSymbols: 1 })) tempErrors.password = "Password must contain at least one symbol";
+      else if (!validator.isStrongPassword(form.password, { minSymbols: 1 })) tempErrors.password = "Password must contain at least one symbol, one number and one capital letter";
       if (form.password !== form.confirmPassword) tempErrors.confirmPassword = "Passwords do not match";
       if (!form.birthDate) tempErrors.birthDate = "Birth Date is required";
     } else {
@@ -53,14 +62,14 @@ const AuthPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
-    setIsLoading(true); // Set loading to true
-  
+
+    setLoading(true); // Start loading
+
     if (isRegister) {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
         const user = userCredential.user;
-  
+
         // Store user details in Firestore
         await setDoc(doc(db, 'users', user.uid), {
           uid: user.uid,
@@ -70,17 +79,12 @@ const AuthPage = () => {
           birthDate: form.birthDate,
           isAdmin: false,
         });
-  
-        // Immediately sign out after registration and await the sign-out process
-        await auth.signOut();
-  
+
         // Notify success and redirect to login
-        toast.success('Registration successful. Please log in.');
-        navigate('/login'); // Ensure this happens after the sign-out process completes
+        toast.success('Registration successful.');
+        navigate('/login');
       } catch (error) {
         toast.error(`Error: ${error.message}`);
-      } finally {
-        setIsLoading(false); // Set loading to false after process finishes
       }
     } else {
       try {
@@ -89,17 +93,17 @@ const AuthPage = () => {
         navigate('/');
       } catch (error) {
         toast.error('Invalid email or password');
-      } finally {
-        setIsLoading(false); // Set loading to false after process finishes
       }
     }
+
+    setLoading(false); // End loading
   };
 
   return (
     <Box
       sx={{
         minHeight: '100vh',
-        width: '100%',
+        width: '100%', 
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -112,212 +116,203 @@ const AuthPage = () => {
         left: 0,
       }}
     >
-      {isLoading && (
-        <Typography
-          variant="h6"
-          sx={{
-            position: 'absolute',
-            top: 20,
-            left: 20,
-            color: '#fff',
-            zIndex: 999,
-          }}
-        >
-          Loading...
-        </Typography>
-      )}
-
-      {!isLoading && (
-        <Container
-          component="main"
-          maxWidth="md"
+      <Container
+        component="main"
+        maxWidth="md"
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          px: 2,
+        }}
+      >
+        <Paper
+          elevation={10}
           sx={{
             display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh', 
-            px: 2,
+            width: '120vh',
+            maxWidth: '200%',
+            height: '530px',
+            borderRadius: 3,
+            overflow: 'hidden',
+            position: 'relative',
+            backgroundColor: 'transparent',
+            backdropFilter: 'blur(10px)',
           }}
         >
-          <Paper
-            elevation={10}
+          {/* Left side (Register/Login info) */}
+          <Box
             sx={{
+              width: '50%',
+              backgroundColor: '#004d40',
+              color: '#fff',
+              p: 2,
               display: 'flex',
-              width: '120vh',
-              maxWidth: '200%',
-              height: '520px',
-              borderRadius: 3,
-              overflow: 'hidden',
-              position: 'relative',
-              backgroundColor: 'transparent',
-              backdropFilter: 'blur(10px)',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
             }}
           >
-            {/* Left side (Register/Login form) */}
-            <Box
+            <Typography variant="h4" gutterBottom>
+              {isRegister ? 'Welcome to Flat Finder!' : 'Welcome Back!'}
+            </Typography>
+            <Typography variant="body1">
+              {isRegister
+                ? 'Register to find your dream flat today!'
+                : 'Log in to continue your journey.'}
+            </Typography>
+            <Button
+              variant="outlined"
+              onClick={() => setIsRegister(!isRegister)}
               sx={{
-                width: '50%',
-                backgroundColor: '#004d40',
+                mt: 6,
+                borderColor: '#fff',
                 color: '#fff',
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
+                '&:hover': {
+                  backgroundColor: '#fff',
+                  color: '#004d40',
+                },
               }}
             >
-              <Typography variant="h4" gutterBottom>
-                {isRegister ? 'Welcome to Flat Finder!' : 'Welcome Back!'}
-              </Typography>
-              <Typography variant="body1">
-                {isRegister
-                  ? 'Register to find your dream flat today!'
-                  : 'Log in to continue your journey.'}
-              </Typography>
-              <Button
-                variant="outlined"
-                onClick={() => setIsRegister(!isRegister)}
-                sx={{
-                  mt: 6,
-                  borderColor: '#fff',
-                  color: '#fff',
-                  '&:hover': {
-                    backgroundColor: '#fff',
-                    color: '#004d40',
-                  },
-                }}
-              >
-                {isRegister ? 'Have an account? Login' : 'New here? Register'}
-              </Button>
-            </Box>
+              {isRegister ? 'Have an account? Login' : 'New here? Register'}
+            </Button>
+          </Box>
 
-            {/* Right side (Form section) */}
-            <Box
-              sx={{
-                width: '50%',
-                padding: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <Typography variant="h6" align="center" sx={{ mb: 2 }}>
-                {isRegister ? 'Create an Account' : 'Login to Your Account'}
-              </Typography>
-              <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                {isRegister && (
-                  <>
-                    <TextField
-                      margin="normal"
-                      fullWidth
-                      id="firstName"
-                      label="First Name"
-                      name="firstName"
-                      autoComplete="given-name"
-                      autoFocus
-                      value={form.firstName}
-                      onChange={handleChange}
-                      error={Boolean(errors.firstName)}
-                      helperText={errors.firstName}
-                      size="small"
-                      sx={{ mb: 1 }}
-                    />
-                    <TextField
-                      margin="normal"
-                      fullWidth
-                      id="lastName"
-                      label="Last Name"
-                      name="lastName"
-                      autoComplete="family-name"
-                      value={form.lastName}
-                      onChange={handleChange}
-                      error={Boolean(errors.lastName)}
-                      helperText={errors.lastName}
-                      size="small"
-                      sx={{ mb: 1 }}
-                    />
-                  </>
-                )}
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  error={Boolean(errors.email)}
-                  helperText={errors.email}
-                  size="small"
-                  sx={{ mb: 1 }}
-                />
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete={isRegister ? 'new-password' : 'current-password'}
-                  value={form.password}
-                  onChange={handleChange}
-                  error={Boolean(errors.password)}
-                  helperText={errors.password}
-                  size="small"
-                  sx={{ mb: 1 }}
-                />
-                {isRegister && (
-                  <>
-                    <TextField
-                      margin="normal"
-                      fullWidth
-                      name="confirmPassword"
-                      label="Confirm Password"
-                      type="password"
-                      id="confirmPassword"
-                      value={form.confirmPassword}
-                      onChange={handleChange}
-                      error={Boolean(errors.confirmPassword)}
-                      helperText={errors.confirmPassword}
-                      size="small"
-                      sx={{ mb: 1 }}
-                    />
-                    <TextField
-                      margin="normal"
-                      fullWidth
-                      name="birthDate"
-                      label="Birth Date"
-                      type="date"
-                      id="birthDate"
-                      InputLabelProps={{ shrink: true }}
-                      value={form.birthDate}
-                      onChange={handleChange}
-                      error={Boolean(errors.birthDate)}
-                      helperText={errors.birthDate}
-                      size="small"
-                      sx={{ mb: 1 }}
-                    />
-                  </>
-                )}
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    mt: 2,
-                    backgroundColor: '#004d40',
-                    '&:hover': { backgroundColor: '#00796b' },
-                  }}
-                >
-                  {isRegister ? 'Register' : 'Login'}
-                </Button>
+          {/* Right side (Form) */}
+          <Box
+            sx={{
+              width: '50%',
+              padding: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+          >
+            {loading ? ( // If loading, show spinner
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress />
               </Box>
-            </Box>
-          </Paper>
-        </Container>
-      )}
+            ) : (
+              <>
+                <Typography variant="h6" align="center" sx={{ mb: 2 }}>
+                  {isRegister ? 'Create an Account' : 'Login to Your Account'}
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                  {isRegister && (
+                    <>
+                      <TextField
+                        margin="normal"
+                        fullWidth
+                        id="firstName"
+                        label="First Name"
+                        name="firstName"
+                        autoComplete="given-name"
+                        autoFocus
+                        value={form.firstName}
+                        onChange={handleChange}
+                        error={Boolean(errors.firstName)}
+                        helperText={errors.firstName}
+                        size="small"
+                        sx={{ mb: 1 }}
+                      />
+                      <TextField
+                        margin="normal"
+                        fullWidth
+                        id="lastName"
+                        label="Last Name"
+                        name="lastName"
+                        autoComplete="family-name"
+                        value={form.lastName}
+                        onChange={handleChange}
+                        error={Boolean(errors.lastName)}
+                        helperText={errors.lastName}
+                        size="small"
+                        sx={{ mb: 1 }}
+                      />
+                    </>
+                  )}
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    error={Boolean(errors.email)}
+                    helperText={errors.email}
+                    size="small"
+                    sx={{ mb: 1 }}
+                  />
+                  <TextField
+                    margin="normal"
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete={isRegister ? 'new-password' : 'current-password'}
+                    value={form.password}
+                    onChange={handleChange}
+                    error={Boolean(errors.password)}
+                    helperText={errors.password}
+                    size="small"
+                    sx={{ mb: 1 }}
+                  />
+                  {isRegister && (
+                    <>
+                      <TextField
+                        margin="normal"
+                        fullWidth
+                        name="confirmPassword"
+                        label="Confirm Password"
+                        type="password"
+                        id="confirmPassword"
+                        value={form.confirmPassword}
+                        onChange={handleChange}
+                        error={Boolean(errors.confirmPassword)}
+                        helperText={errors.confirmPassword}
+                        size="small"
+                        sx={{ mb: 1 }}
+                      />
+                      <TextField
+                        margin="normal"
+                        fullWidth
+                        name="birthDate"
+                        label="Birth Date"
+                        type="date"
+                        id="birthDate"
+                        InputLabelProps={{ shrink: true }}
+                        value={form.birthDate}
+                        onChange={handleChange}
+                        error={Boolean(errors.birthDate)}
+                        helperText={errors.birthDate}
+                        size="small"
+                        sx={{ mb: 1 }}
+                      />
+                    </>
+                  )}
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{
+                      mt: 2,
+                      backgroundColor: '#004d40',
+                      '&:hover': { backgroundColor: '#00796b' },
+                    }}
+                  >
+                    {isRegister ? 'Register' : 'Login'}
+                  </Button>
+                </Box>
+              </>
+            )}
+          </Box>
+        </Paper>
+      </Container>
     </Box>
   );
 };

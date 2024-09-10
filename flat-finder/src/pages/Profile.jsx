@@ -4,7 +4,18 @@ import { useAuth } from '../hooks/useAuth';
 import { db, auth } from '../firebase';
 import { doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { deleteUser } from 'firebase/auth';
-import { Container, Paper, Typography, Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack } from '@mui/material';
+import { 
+  Container, 
+  Paper, 
+  Typography, 
+  Button, 
+  Box, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle, 
+  Stack } from '@mui/material';
 import { toast } from 'react-toastify';
 
 const Profile = () => {

@@ -4,7 +4,15 @@ import { db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import FlatForm from '../components/FlatForm';
 import { toast } from 'react-toastify';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Box, Container } from '@mui/material';
+import { 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle, 
+  Button, 
+  Box, 
+  Container } from '@mui/material';
 
 const EditFlat = () => {
   const { id } = useParams();

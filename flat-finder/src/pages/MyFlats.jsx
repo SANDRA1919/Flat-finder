@@ -3,10 +3,21 @@ import { db } from '../firebase';
 import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import FlatCard from '../components/FlatCard';
 import { useAuth } from '../hooks/useAuth';
-import { Container, Paper, Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography, Box, IconButton } from '@mui/material';
+import { 
+  Container, 
+  Paper, 
+  Grid, 
+  Button, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle, 
+  Typography, 
+  Box,  } from '@mui/material';
 import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete'; // Importing the Delete icon
-import CloseIcon from '@mui/icons-material/Close'; // Importing the Close icon
+
 
 const MyFlats = () => {
   const { user } = useAuth();

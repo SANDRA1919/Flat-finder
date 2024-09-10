@@ -1,12 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Paper, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, Box, TextField, Tabs, Tab } from '@mui/material';
+import { 
+  Container, 
+  Paper, 
+  Typography, 
+  Button, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogActions, 
+  Box, 
+  TextField, 
+  Tabs, 
+  Tab } from '@mui/material';
 import { toast } from 'react-toastify';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReplyIcon from '@mui/icons-material/Reply';
 import SendIcon from '@mui/icons-material/Send';
 import { useAuth } from '../contexts/AuthContext'; 
 import { db } from '../firebase'; 
-import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, addDoc } from 'firebase/firestore'; 
+import { collection, query, where, onSnapshot, doc, updateDoc, deleteDoc, addDoc } from 'firebase/firestore'; 
 
 const Inbox = () => {
   const { user } = useAuth();
@@ -22,39 +34,37 @@ const Inbox = () => {
   const unreadMessageRef = useRef(null); // Ref to store the first unread message
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      if (user) {
-        try {
-          // Fetch received messages
-          const inboxQuery = query(collection(db, 'messages'), where('recipientId', '==', user.uid));
-          const inboxSnapshot = await getDocs(inboxQuery);
-          const inboxList = inboxSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setMessages(inboxList);
+    if (user) {
+      const inboxQuery = query(collection(db, 'messages'), where('recipientId', '==', user.uid));
+      const sentQuery = query(collection(db, 'messages'), where('senderId', '==', user.uid));
 
-          // Fetch sent messages
-          const sentQuery = query(collection(db, 'messages'), where('senderId', '==', user.uid));
-          const sentSnapshot = await getDocs(sentQuery);
-          const sentList = sentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setSentMessages(sentList);
+      // Real-time listener for received messages
+      const unsubscribeInbox = onSnapshot(inboxQuery, (snapshot) => {
+        const inboxList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setMessages(inboxList);
 
-          // Mark received messages as read
-          const unreadMessages = inboxList.filter(msg => msg.recipientId === user.uid && !msg.isRead);
-          if (unreadMessages.length > 0 && unreadMessageRef.current) {
-            // Scroll to the first unread message
-            unreadMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-
-          for (const message of unreadMessages) {
-            await updateDoc(doc(db, 'messages', message.id), { isRead: true });
-          }
-        } catch (error) {
-          console.error('Error fetching messages:', error);
-          toast.error('Error fetching messages');
+        // Mark unread messages as read
+        const unreadMessages = inboxList.filter(msg => msg.recipientId === user.uid && !msg.isRead);
+        if (unreadMessages.length > 0 && unreadMessageRef.current) {
+          unreadMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-      }
-    };
 
-    fetchMessages();
+        unreadMessages.forEach(async (message) => {
+          await updateDoc(doc(db, 'messages', message.id), { isRead: true });
+        });
+      });
+
+      // Real-time listener for sent messages
+      const unsubscribeSent = onSnapshot(sentQuery, (snapshot) => {
+        const sentList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setSentMessages(sentList);
+      });
+
+      return () => {
+        unsubscribeInbox();
+        unsubscribeSent();
+      };
+    }
   }, [user]);
 
   const handleTabChange = (event, newValue) => {
@@ -90,8 +100,6 @@ const Inbox = () => {
   const handleDeleteMessage = async () => {
     try {
       await deleteDoc(doc(db, 'messages', messageToDelete));
-      setMessages(messages.filter(message => message.id !== messageToDelete));
-      setSentMessages(sentMessages.filter(message => message.id !== messageToDelete));
       toast.success('Message deleted successfully');
       handleCloseDeleteDialog();
     } catch (error) {

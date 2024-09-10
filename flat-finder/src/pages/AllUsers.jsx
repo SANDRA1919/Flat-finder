@@ -1,7 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, doc, updateDoc, deleteDoc, query, where, getCountFromServer } from 'firebase/firestore';
-import { Button, Table, TableBody, TableCell, TableHead, TableRow, Paper, Typography, IconButton, Box, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Card, CardContent, Grid, useMediaQuery } from '@mui/material';
+import { 
+  collection, 
+  getDocs, 
+  doc, 
+  updateDoc, 
+  deleteDoc, 
+  query, 
+  where, 
+  getCountFromServer, 
+  writeBatch } from 'firebase/firestore';
+import { 
+  Button, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableRow, 
+  Paper, 
+  Typography, 
+  IconButton, 
+  Box, Tooltip, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle, 
+  Card, 
+  CardContent, 
+  Grid, 
+  useMediaQuery } from '@mui/material';
 import { toast } from 'react-toastify';
 import { Delete as DeleteIcon, AdminPanelSettings as AdminIcon } from '@mui/icons-material';
 import { green, teal } from '@mui/material/colors';
@@ -73,14 +101,31 @@ const AllUsers = () => {
       }
     } else if (dialogType === 'removeUser') {
       try {
-        await deleteDoc(doc(db, 'users', selectedUser.id));
+        // Fetch all apartment documents belonging to the user
+        const apartmentQuery = query(collection(db, 'flats'), where('ownerId', '==', selectedUser.id));
+        const apartmentSnapshot = await getDocs(apartmentQuery);
+  
+        // Delete apartment documents
+        const batch = writeBatch(db);
+        apartmentSnapshot.docs.forEach(doc => {
+          batch.delete(doc.ref);
+        });
+  
+        // Delete user document
+        batch.delete(doc(db, 'users', selectedUser.id));
+  
+        // Commit the batch
+        await batch.commit();
+  
+        // Update UI state
         setUsers(users.filter(user => user.id !== selectedUser.id));
-        toast.success('User removed successfully');
+        toast.success('User and their apartments removed successfully');
       } catch (error) {
-        toast.error('Error removing user');
+        console.error('Error removing user and apartments:', error);
+        toast.error('Error removing user and apartments');
       }
     }
-
+  
     handleCloseDialog();
   };
 

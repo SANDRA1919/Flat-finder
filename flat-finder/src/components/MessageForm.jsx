@@ -18,7 +18,7 @@ const MessageForm = ({ flatId, recipientId, senderId, senderEmail }) => {
         senderId,
         senderEmail,
         message,
-        timestamp: timestamp.toISOString(), // Save timestamp as ISO string
+        timestamp: timestamp.toISOString(), 
         isRead: false // Messages are initially unread
       });
       setMessage(''); // Clear message input after sending

@@ -85,7 +85,7 @@ const Favorites = () => {
     setSortConfig({ key, direction });
   };
 
-  // Modificare: Pregătirea datelor pentru afișare, cu verificarea `dateAvailable`
+  // Pregătirea datelor pentru afișare, cu verificarea `dateAvailable`
   const formattedFavorites = favorites.map(flat => ({
     ...flat,
     dateAvailable: flat.dateAvailable && typeof flat.dateAvailable.toDate === 'function'
