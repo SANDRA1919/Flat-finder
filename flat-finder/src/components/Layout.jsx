@@ -7,7 +7,7 @@ const Layout = () => {
   return (
     <div>
       <Navbar />
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 3,}}>
         <Outlet />
       </Box>
     </div>

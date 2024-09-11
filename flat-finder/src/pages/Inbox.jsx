@@ -11,7 +11,8 @@ import {
   Box, 
   TextField, 
   Tabs, 
-  Tab } from '@mui/material';
+  Tab 
+} from '@mui/material';
 import { toast } from 'react-toastify';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReplyIcon from '@mui/icons-material/Reply';
@@ -31,7 +32,6 @@ const Inbox = () => {
   const [openReplyDialog, setOpenReplyDialog] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [tabValue, setTabValue] = useState(0); // State for tabs
-  const unreadMessageRef = useRef(null); // Ref to store the first unread message
 
   useEffect(() => {
     if (user) {
@@ -42,16 +42,6 @@ const Inbox = () => {
       const unsubscribeInbox = onSnapshot(inboxQuery, (snapshot) => {
         const inboxList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setMessages(inboxList);
-
-        // Mark unread messages as read
-        const unreadMessages = inboxList.filter(msg => msg.recipientId === user.uid && !msg.isRead);
-        if (unreadMessages.length > 0 && unreadMessageRef.current) {
-          unreadMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-
-        unreadMessages.forEach(async (message) => {
-          await updateDoc(doc(db, 'messages', message.id), { isRead: true });
-        });
       });
 
       // Real-time listener for sent messages
@@ -71,9 +61,24 @@ const Inbox = () => {
     setTabValue(newValue);
   };
 
-  const handleViewMessage = (message) => {
+  const handleViewMessage = async (message) => {
     setSelectedMessage(message);
     setViewDialogOpen(true);
+
+    // Mark message as read when viewed
+    if (!message.isRead) {
+      try {
+        await updateDoc(doc(db, 'messages', message.id), { isRead: true });
+        setMessages((prevMessages) => 
+          prevMessages.map((msg) =>
+            msg.id === message.id ? { ...msg, isRead: true } : msg
+          )
+        );
+      } catch (error) {
+        console.error('Error marking message as read:', error);
+        toast.error('Failed to mark message as read');
+      }
+    }
   };
 
   const handleReplyMessage = (message) => {
@@ -178,10 +183,9 @@ const Inbox = () => {
           {tabValue === 0 && (
             <>
               {messages.length > 0 ? (
-                messages.map((message, index) => (
+                messages.map((message) => (
                   <Paper
                     key={message.id}
-                    ref={index === 0 && !message.isRead ? unreadMessageRef : null} // Focus the first unread message
                     sx={{
                       p: 2,
                       mt: 2,
